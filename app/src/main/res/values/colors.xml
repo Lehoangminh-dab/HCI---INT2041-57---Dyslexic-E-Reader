@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="opacity75_black">#BF000000</color>
+    <color name="opacity40_black">#66000000</color>
+    <color name="opacity10_black">#1A000000</color>
+    <color name="gray">#B3B3B3</color>
+    <color name="opacity_gray">#D9D9D9</color>
+    <color name="red">#FF1414</color>
+    <color name="opacity_red">#66FF1414</color>
+    <color name="green">#0CA01B</color>
+    <color name="opacity_green">#660CA01B</color>
+    <color name="olive">#A29519</color>
+    <color name="opacity_olive">#66A29519</color>
+    <color name="blue">#2068F6</color>
+    <color name="opacity_blue">#662068F6</color>
+    <color name="turquoise">#00BAB7</color>
+    <color name="opacity_turquoise">#2600BAB7</color>
+    <color name="violet">#9579DC</color>
+    <color name="opacity_violet">#669579DC</color>
+    <color name="pink">#D76FAD</color>
+    <color name="opacity_pink">#66D76FAD</color>
+    <color name="background_reading">#FCECCB</color>
+    <color name="yellow">#F6BB42</color>
+    <color name="opacity_yellow">#66F6BB42</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
