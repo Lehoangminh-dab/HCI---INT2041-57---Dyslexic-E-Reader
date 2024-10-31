@@ -4,4 +4,6 @@
     <string name="upload_file_description">Add your own documents</string>
     <string name="upload_file_icon">upload_file_icon</string>
     <string name="library_title">Library</string>
+    <string name="title_activity_setting">Setting</string>
+    <string name="settings">Settings</string>
 </resources>
