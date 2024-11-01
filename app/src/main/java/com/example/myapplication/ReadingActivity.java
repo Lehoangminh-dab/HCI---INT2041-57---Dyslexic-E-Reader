@@ -353,27 +353,6 @@ public class ReadingActivity extends AppCompatActivity {
         handler.postDelayed(removeHighlightRunnable, 2500);
     }
 
-//    private void applyHighlightMode(String mode) {
-//        ConstraintLayout readingLayout = findViewById(R.id.reading_layout);  // Assuming this is the root layout
-//
-//        if (mode.equals("WORD")) {
-//            initTouchEventWord();
-//        } else if (mode.equals("RULER")) {
-//            initTouchEventRuler();
-//        } else if (mode.equals("DARK")) {
-//            initTouchEventDark();
-//            readingLayout.setBackgroundColor(Color.parseColor("#BF000000"));  // Set dark background for dark mode
-//
-//            // Set icons to white color
-//            closeBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
-//            bookmarkBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
-//            tuneBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
-//            arrowLeftBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
-//            arrowRightBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
-//            import_contacts_ic.setColorFilter(ContextCompat.getColor(this, R.color.white));
-//        }
-//    }
-
     private void applyHighlightMode(String mode) {
         ConstraintLayout readingLayout = findViewById(R.id.reading_layout);
 
