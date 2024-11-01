@@ -26,7 +26,7 @@ public class HighlightActivity extends AppCompatActivity {
     private boolean isHighlightEnabled = true; // Start with highlight enabled
 
     enum HighlightMode {
-        WORD, RULER, DARK
+        WORD, RULER, DARK, OFF
     }
 
 
@@ -71,6 +71,7 @@ public class HighlightActivity extends AppCompatActivity {
                 applyHighlightMode(HighlightMode.WORD); // Default to WORD mode when enabled
             } else {
                 highlightSwitch.getThumbDrawable().clearColorFilter();
+                applyHighlightMode(HighlightMode.OFF); // Thêm dòng này để lưu chế độ OFF
                 resetHighlight();
             }
         });

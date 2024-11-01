@@ -87,14 +87,15 @@ public class ReadingActivity extends AppCompatActivity {
         bookmarkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(ReadingActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
         tuneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(ReadingActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -123,7 +124,8 @@ public class ReadingActivity extends AppCompatActivity {
         finishedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(ReadingActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -162,8 +164,11 @@ public class ReadingActivity extends AppCompatActivity {
             text.setText(pages[currentPage]);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên trang 5
 
-            // Ẩn nút bookmark và tune trên trang cuối
-            disableButtons();
+            // Giữ các nút bookmark và tune hiện trên trang cuối
+            bookmarkBtn.setVisibility(View.VISIBLE);
+            bookmarkBtn.setEnabled(true);
+            tuneBtn.setVisibility(View.VISIBLE);
+            tuneBtn.setEnabled(true);
 
             // Cập nhật độ mờ của nút arrow
             arrowLeftBtn.setAlpha(1.0f);
@@ -172,7 +177,7 @@ public class ReadingActivity extends AppCompatActivity {
         } else if (currentPage == pages.length) {  // FrameLayout sau trang cuối
             text.setVisibility(View.GONE);
             completionOverlay.setVisibility(View.VISIBLE);  // Hiển thị overlay ở trang FrameLayout
-            disableButtons();
+            disableButtons();  // Ẩn bookmark và tune ở FrameLayout cuối
 
             // Làm mờ nút phải khi đến FrameLayout
             arrowLeftBtn.setAlpha(1.0f);
@@ -183,6 +188,7 @@ public class ReadingActivity extends AppCompatActivity {
         int progress = (int) (((float) currentPage / pages.length) * 100);
         readingProgress.setProgress(progress);
     }
+
 
     private void disableButtons() {
         bookmarkBtn.setVisibility(View.GONE);
@@ -333,12 +339,8 @@ public class ReadingActivity extends AppCompatActivity {
     private void applyDarkHighlight(Spannable spannableText, int start, int end) {
 
         // Tô sáng từ được chọn với khung chữ nhật bao quanh
-        spannableText.setSpan(new BackgroundColorSpan(Color.parseColor("#FFFFCC")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu nền cho từ được chọn
+        spannableText.setSpan(new BackgroundColorSpan(Color.parseColor("#FCECCB")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu nền cho từ được chọn
         spannableText.setSpan(new ForegroundColorSpan(Color.BLACK), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu chữ của từ được chọn
-
-//        // Làm mờ các từ khác
-//        spannableText.setSpan(new ForegroundColorSpan(Color.parseColor("#666666")), 0, start, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        spannableText.setSpan(new ForegroundColorSpan(Color.parseColor("#666666")), end, spannableText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void scheduleRemoveHighlight() {
@@ -351,8 +353,29 @@ public class ReadingActivity extends AppCompatActivity {
         handler.postDelayed(removeHighlightRunnable, 2500);
     }
 
+//    private void applyHighlightMode(String mode) {
+//        ConstraintLayout readingLayout = findViewById(R.id.reading_layout);  // Assuming this is the root layout
+//
+//        if (mode.equals("WORD")) {
+//            initTouchEventWord();
+//        } else if (mode.equals("RULER")) {
+//            initTouchEventRuler();
+//        } else if (mode.equals("DARK")) {
+//            initTouchEventDark();
+//            readingLayout.setBackgroundColor(Color.parseColor("#BF000000"));  // Set dark background for dark mode
+//
+//            // Set icons to white color
+//            closeBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
+//            bookmarkBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
+//            tuneBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
+//            arrowLeftBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
+//            arrowRightBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
+//            import_contacts_ic.setColorFilter(ContextCompat.getColor(this, R.color.white));
+//        }
+//    }
+
     private void applyHighlightMode(String mode) {
-        ConstraintLayout readingLayout = findViewById(R.id.reading_layout);  // Assuming this is the root layout
+        ConstraintLayout readingLayout = findViewById(R.id.reading_layout);
 
         if (mode.equals("WORD")) {
             initTouchEventWord();
@@ -360,7 +383,7 @@ public class ReadingActivity extends AppCompatActivity {
             initTouchEventRuler();
         } else if (mode.equals("DARK")) {
             initTouchEventDark();
-            readingLayout.setBackgroundColor(Color.parseColor("#BF000000"));  // Set dark background for dark mode
+            readingLayout.setBackgroundColor(Color.parseColor("#BF000000"));
 
             // Set icons to white color
             closeBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
@@ -369,7 +392,18 @@ public class ReadingActivity extends AppCompatActivity {
             arrowLeftBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
             arrowRightBtn.setColorFilter(ContextCompat.getColor(this, R.color.white));
             import_contacts_ic.setColorFilter(ContextCompat.getColor(this, R.color.white));
+        } else if (mode.equals("OFF")) {
+            // Nếu chế độ là OFF, hủy sự kiện chạm để không thể highlight
+            text.setOnTouchListener(null);
+
+            closeBtn.clearColorFilter();
+            bookmarkBtn.clearColorFilter();
+            tuneBtn.clearColorFilter();
+            arrowLeftBtn.clearColorFilter();
+            arrowRightBtn.clearColorFilter();
+            import_contacts_ic.clearColorFilter();
         }
     }
+
 
 }
