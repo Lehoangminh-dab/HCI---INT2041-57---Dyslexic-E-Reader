@@ -30,7 +30,6 @@ public class FragmentToolbar extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_toolbar, container, false);
-        // Inflate the layout for this fragment
         homeButton = view.findViewById(R.id.homeBtn);
         libraryButton = view.findViewById(R.id.libraryBtn);
         settingsButton = view.findViewById(R.id.settingsBtn);
@@ -70,6 +69,5 @@ public class FragmentToolbar extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 }

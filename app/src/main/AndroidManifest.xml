@@ -13,16 +13,21 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
+            android:name=".FontDisplayActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FontEditActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
             android:name=".LibraryActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".SettingsActivity"
             android:exported="true"
-            android:theme="@style/Theme.MyApplication">
-        </activity>
+            android:theme="@style/Theme.MyApplication" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

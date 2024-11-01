@@ -18,6 +18,14 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void create() {
+        FragmentSettingsMenu fragmentSettingsMenu = new FragmentSettingsMenu();
+
+        Bundle args = new Bundle();
+        args.putInt("containerId", R.id.fragmentSetting);
+        fragmentSettingsMenu.setArguments(args);
+
+//        loadFragment(R.id.fragmentSetting, new FragmentSettingsMenu());
+        loadFragment(R.id.fragmentSetting, fragmentSettingsMenu);
         loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
     }
 
