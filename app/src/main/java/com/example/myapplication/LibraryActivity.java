@@ -8,22 +8,33 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.utils.textextractor.DocxTextExtractionStrategy;
+import com.example.myapplication.utils.textextractor.TextExtractorUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 
 public class LibraryActivity extends AppCompatActivity {
+    private static final String EPUB_MIME_TYPE = "application/epub+zip";
+    private static final String PDF_MIME_TYPE = "application/pdf";
+    private static final String JPEG_MIME_TYPE = "image/jpeg";
+    private static final String DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    private static final String PPT_MIME_TYPE = "application/vnd.ms-powerpoint";
+    private static final String PPTX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    private static final String PNG_MIME_TYPE = "image/png";
     private static final String[] MIME_TYPES = {
-            "application/epub+zip",           // EPUB
-            "application/pdf",                // PDF
-            "image/jpeg",                     // JPEG/JPG
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
-            "application/vnd.ms-powerpoint",  // PPT
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
-            "image/png",                       // PNG
+            EPUB_MIME_TYPE,
+            PDF_MIME_TYPE,
+            JPEG_MIME_TYPE,
+            DOCX_MIME_TYPE,
+            PPT_MIME_TYPE,
+            PPTX_MIME_TYPE,
+            PNG_MIME_TYPE
     };
     private static final int REQUEST_CODE_UPLOAD_FILE = 1;
     private static final String LOG_TAG = "LibraryActivity";
+
+    private TextExtractorUtil textExtractorUtil;
     private ImageView uploadFileIcon;
 
     @Override
@@ -71,9 +82,22 @@ public class LibraryActivity extends AppCompatActivity {
             showError("Unexpected null result data");
         }
         fileUri = resultData.getData();
+        Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
 
         // Extract text from file
-        Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
+        String mimeType = getContentResolver().getType(fileUri);
+        if (!Arrays.asList(MIME_TYPES).contains(mimeType)) {
+            showError("Unsupported file type: " + mimeType);
+        }
+
+        switch (mimeType) {
+            case DOCX_MIME_TYPE:
+                textExtractorUtil = new TextExtractorUtil(new DocxTextExtractionStrategy(this));
+                break;
+        }
+
+        String extractedText = textExtractorUtil.extractText(fileUri);
+        Log.d(LOG_TAG, "Extracted text: " + extractedText);
     }
 
     private void showError(String message) {
