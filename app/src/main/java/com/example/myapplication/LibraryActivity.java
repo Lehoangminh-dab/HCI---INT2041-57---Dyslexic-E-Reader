@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.behaviors.UploadFileIconBehavior;
 
 public class LibraryActivity extends AppCompatActivity {
-    ImageView uploadFileIcon;
+    private ImageView uploadFileIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
-        this.uploadFileIcon = findViewById(R.id.upload_file_icon);
+        uploadFileIcon = findViewById(R.id.upload_file_icon);
         setViewBehaviors();
     }
 
