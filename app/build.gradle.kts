@@ -48,6 +48,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    kotlinOptions {
+        jvmTarget = "12"
+    }
 }
 
 dependencies {
@@ -65,7 +68,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-
+    implementation("org.zwobble.mammoth:mammoth:1.5.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

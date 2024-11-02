@@ -12,6 +12,12 @@ import com.example.myapplication.utils.textextractor.DocxTextExtractionStrategy;
 import com.example.myapplication.utils.textextractor.TextExtractorUtil;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.zwobble.mammoth.DocumentConverter;
+import org.zwobble.mammoth.Result;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 public class LibraryActivity extends AppCompatActivity {
@@ -81,7 +87,12 @@ public class LibraryActivity extends AppCompatActivity {
         if (resultData == null) {
             showError("Unexpected null result data");
         }
+
         fileUri = resultData.getData();
+        if (fileUri == null) {
+            showError("Unexpected null file URI");
+        }
+
         Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
 
         // Extract text from file
@@ -90,17 +101,24 @@ public class LibraryActivity extends AppCompatActivity {
             showError("Unsupported file type: " + mimeType);
         }
 
-        switch (mimeType) {
-            case DOCX_MIME_TYPE:
-                textExtractorUtil = new TextExtractorUtil(new DocxTextExtractionStrategy(this));
-                break;
-        }
-
+        initializeTextExtractor(mimeType);
         String extractedText = textExtractorUtil.extractText(fileUri);
         Log.d(LOG_TAG, "Extracted text: " + extractedText);
     }
 
     private void showError(String message) {
         Snackbar.make(uploadFileIcon, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void initializeTextExtractor(String mimeType) {
+        if (mimeType == null) {
+            showError("Null mime type");
+            return;
+        }
+        switch (mimeType) {
+            case DOCX_MIME_TYPE:
+                textExtractorUtil = new TextExtractorUtil(new DocxTextExtractionStrategy(this));
+                break;
+        }
     }
 }
