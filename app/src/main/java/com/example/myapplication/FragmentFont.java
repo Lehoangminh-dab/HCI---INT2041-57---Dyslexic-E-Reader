@@ -3,6 +3,7 @@ package com.example.myapplication;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -39,6 +41,7 @@ public class FragmentFont extends Fragment {
     private ImageView wordSpace1Button;
     private ImageView wordSpace2Button;
     private ImageView wordSpace3Button;
+    private TextView sampleTextView;
 
     public FragmentFont() {
     }
@@ -68,6 +71,7 @@ public class FragmentFont extends Fragment {
         wordSpace1Button = view.findViewById(R.id.wordSpace1Btn);
         wordSpace2Button = view.findViewById(R.id.wordSpace2Btn);
         wordSpace3Button = view.findViewById(R.id.wordSpace3Btn);
+        sampleTextView = view.findViewById(R.id.sampleTextView);
 
         backButton.setOnClickListener(v -> {
             FragmentSettingsMenu fragmentSettingsMenu = new FragmentSettingsMenu();
@@ -76,18 +80,79 @@ public class FragmentFont extends Fragment {
         });
 
         maliFontButton.setOnClickListener(v -> {
-            dyslexicFontButton.setEnabled(true);
             fontName = "mali";
-            maliFontButton.setEnabled(false);
+            maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+            maliSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+            dyslexicText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray));
+            dyslexicSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray));
+            updateSampleText();
         });
 
         dyslexicFontButton.setOnClickListener(v -> {
-            maliFontButton.setEnabled(true);
             fontName = "dyslexic";
-            dyslexicFontButton.setEnabled(true);
+            dyslexicText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+            dyslexicSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+            maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray));
+            maliSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray));
+            updateSampleText();
         });
 
+        sizeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                size = progress;
+                updateSampleText();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        lineSpaceSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                lineSpace = progress / 10.0f;
+                updateSampleText();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        wordSpace1Button.setOnClickListener(v -> {
+            wordSpace = 1;
+            wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
+            wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
+            wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
+            updateSampleText();
+        });
+
+        wordSpace2Button.setOnClickListener(v -> {
+            wordSpace = 2;
+            wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
+            wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
+            wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
+            updateSampleText();
+        });
+
+        wordSpace3Button.setOnClickListener(v -> {
+            wordSpace = 3;
+            wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
+            wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
+            wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
+            updateSampleText();
+        });
 
         return view;
     }
@@ -106,26 +171,41 @@ public class FragmentFont extends Fragment {
         wordSpace= sharedPreferences.getInt("wordSpace", 1);
 
         if (fontName.contains("mali")) {
-            maliFontButton.setEnabled(false);
             maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             maliSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
         } else if(fontName.contains("dyslexic")) {
-            dyslexicFontButton.setEnabled(false);
             dyslexicText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             dyslexicSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
         }
         sizeSeekbar.setProgress(size);
         lineSpaceSeekbar.setProgress((int) (lineSpace * 10));
         if (wordSpace == 1) {
-            wordSpace1Button.setEnabled(false);
             wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
         } else if (wordSpace == 2) {
-            wordSpace2Button.setEnabled(false);
             wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
         } else {
-            wordSpace3Button.setEnabled(false);
             wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
         }
+
+        updateSampleText();
+    }
+
+    private void updateSampleText() {
+        int fontId = getResources().getIdentifier(fontName, "font", requireActivity().getPackageName());
+        Typeface typeface = ResourcesCompat.getFont(requireActivity(), fontId);
+        sampleTextView.setTypeface(typeface);
+        sampleTextView.setTextSize(size);
+        sampleTextView.setLineSpacing(0, lineSpace);
+        String originalText = sampleTextView.getText().toString();
+        String updatedText;
+        if (wordSpace == 1) {
+            updatedText = originalText.replaceAll("\\s+", "  ");
+        } else if (wordSpace == 2) {
+            updatedText = originalText.replaceAll("\\s+", "    ");
+        } else {
+            updatedText = originalText.replaceAll("\\s+", "      ");
+        }
+        sampleTextView.setText(updatedText);
     }
 
     @Override
