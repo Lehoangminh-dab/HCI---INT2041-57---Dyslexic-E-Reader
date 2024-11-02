@@ -11,7 +11,13 @@ import java.util.Arrays;
 
 public class LibraryActivity extends AppCompatActivity {
     private static final String[] MIME_TYPES = {
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            "application/epub+zip",           // EPUB
+            "application/pdf",                // PDF
+            "image/jpeg",                     // JPEG/JPG
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
+            "application/vnd.ms-powerpoint",  // PPT
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation", // PPTX
+            "image/png",                       // PNG
     };
     private static final int REQUEST_CODE_UPLOAD_FILE = 1;
     private static final String LOG_TAG = "LibraryActivity";
