@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class DocxTextExtractionStrategy implements TextExtractionStrategy {
-    private static final String DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument" +
-            ".wordprocessingml.document";
-
     private final Context context;
 
     public DocxTextExtractionStrategy(Context context) {

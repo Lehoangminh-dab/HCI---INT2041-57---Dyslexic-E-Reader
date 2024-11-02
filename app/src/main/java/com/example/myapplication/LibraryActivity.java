@@ -1,23 +1,24 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.utils.textextractor.DocxTextExtractionStrategy;
+import com.example.myapplication.utils.textextractor.EpubTextExtractionStrategy;
 import com.example.myapplication.utils.textextractor.TextExtractorUtil;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.zwobble.mammoth.DocumentConverter;
-import org.zwobble.mammoth.Result;
-
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 public class LibraryActivity extends AppCompatActivity {
@@ -71,6 +72,32 @@ public class LibraryActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_CODE_UPLOAD_FILE);
     }
 
+
+    /**
+     * Handles the result of a file selection activity, extracts text from the selected file,
+     * and creates a new text file with the extracted content.
+     *
+     * <p><b>File Storage Details:</b><br>
+     * The extracted text is saved to a new file named "extracted_text.txt" in the app's private
+     * storage directory (accessed via {@code Context.getFilesDir()}). This directory is:
+     * <ul>
+     *   <li>Private to the app (not accessible by other apps)</li>
+     *   <li>Automatically deleted when the app is uninstalled</li>
+     *   <li>Typically located at: {@code /data/data/[package_name]/files/extracted_text.txt}</li>
+     * </ul>
+     * To access this file programmatically within the app, use:
+     * {@code File file = new File(context.getFilesDir(), "extracted_text.txt")}</p>
+     *
+     * @throws RuntimeException if the request code is unexpected, result code is not OK,
+     *                         result data is null, file URI is null, or mime type is unsupported.
+     *                         These exceptions are handled by the showError() method.
+     * @throws IOException if file creation or writing fails (handled internally with logging)
+     *
+     * @see #createTextFile(String, String)
+     * @see #initializeTextExtractor(String)
+     * @see TextExtractorUtil#extractText(Uri)
+     * @see android.content.Context#getFilesDir()
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData) {
@@ -104,6 +131,13 @@ public class LibraryActivity extends AppCompatActivity {
         initializeTextExtractor(mimeType);
         String extractedText = textExtractorUtil.extractText(fileUri);
         Log.d(LOG_TAG, "Extracted text: " + extractedText);
+
+        // Get chosen file name
+        String fileName = getFileName(fileUri);
+        Log.d(LOG_TAG, "Chosen file name: " + fileName);
+        // Remove the file name's extension
+        String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+        createTextFile(fileNameWithoutExtension + ".txt", extractedText);
     }
 
     private void showError(String message) {
@@ -119,6 +153,38 @@ public class LibraryActivity extends AppCompatActivity {
             case DOCX_MIME_TYPE:
                 textExtractorUtil = new TextExtractorUtil(new DocxTextExtractionStrategy(this));
                 break;
+            case EPUB_MIME_TYPE:
+                textExtractorUtil = new TextExtractorUtil(new EpubTextExtractionStrategy());
+                break;
         }
+    }
+
+    private void createTextFile(String fileName, String fileContent) {
+        File file = new File(this.getFilesDir(), fileName);
+
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(fileContent);
+            fileWriter.close();
+            Log.d(LOG_TAG, "Created new file: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getFileName(Uri fileUri) {
+        Cursor returnCursor = getContentResolver().query(fileUri, null, null,
+                null, null);
+        if (returnCursor == null || !returnCursor.moveToFirst()) {
+            Log.e(LOG_TAG, "Error getting file name");
+            return "Error getting file name";
+        }
+
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        return returnCursor.getString(nameIndex);
     }
 }
