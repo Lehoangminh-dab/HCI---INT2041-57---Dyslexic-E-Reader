@@ -1,11 +1,14 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 
@@ -55,6 +58,25 @@ public class LibraryActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode,
                                  Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-        Log.d(LOG_TAG, "Chosen file URI: " + resultData.getData());
+
+        // Get fileUri
+        Uri fileUri;
+        if (requestCode != REQUEST_CODE_UPLOAD_FILE) {
+            showError("Unexpected request code: " + requestCode);
+        }
+        if (resultCode != LibraryActivity.RESULT_OK) {
+            showError("Unexpected result code: " + resultCode);
+        }
+        if (resultData == null) {
+            showError("Unexpected null result data");
+        }
+        fileUri = resultData.getData();
+
+        // Extract text from file
+        Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
+    }
+
+    private void showError(String message) {
+        Snackbar.make(uploadFileIcon, message, Snackbar.LENGTH_LONG).show();
     }
 }
