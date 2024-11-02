@@ -27,10 +27,6 @@
             android:name=".LibraryActivity"
             android:exported="true">
         </activity>
-        <activity
-            android:name=".FilePickerActivity"
-            android:exported="true">
-        </activity>
     </application>
 
 </manifest>

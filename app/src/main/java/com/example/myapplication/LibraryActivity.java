@@ -1,14 +1,14 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.behaviors.UploadFileIconBehavior;
-
 public class LibraryActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "LibraryActivity";
     private ImageView uploadFileIcon;
 
     @Override
@@ -24,9 +24,15 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     private void setupUploadFileIconBehavior () {
-        UploadFileIconBehavior uploadFileIconBehavior = new UploadFileIconBehavior();
         uploadFileIcon.setOnClickListener(v -> {
-            uploadFileIconBehavior.onClicked();
+            openFile();
         });
+    }
+
+    private void openFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivity(intent);
     }
 }
