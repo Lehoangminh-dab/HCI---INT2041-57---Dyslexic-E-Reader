@@ -78,6 +78,7 @@ dependencies {
     implementation("org.slf4j:slf4j-android:1.7.25")
     implementation("com.itextpdf:kernel:8.0.5")
     implementation("com.itextpdf:io:8.0.5")
+    implementation("com.google.mlkit:text-recognition:16.0.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

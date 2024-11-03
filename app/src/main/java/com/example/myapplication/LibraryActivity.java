@@ -11,8 +11,6 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.utils.textextractor.DocxTextExtractionStrategy;
-import com.example.myapplication.utils.textextractor.EpubTextExtractionStrategy;
 import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
 import com.example.myapplication.utils.textextractor.TextExtractor;
 import com.google.android.material.snackbar.Snackbar;
@@ -107,18 +105,18 @@ public class LibraryActivity extends AppCompatActivity {
         // Get fileUri
         Uri fileUri;
         if (requestCode != REQUEST_CODE_UPLOAD_FILE) {
-            showError("Unexpected request code: " + requestCode);
+            showMessage("Unexpected request code: " + requestCode);
         }
         if (resultCode != LibraryActivity.RESULT_OK) {
-            showError("Unexpected result code: " + resultCode);
+            showMessage("Unexpected result code: " + resultCode);
         }
         if (resultData == null) {
-            showError("Unexpected null result data");
+            showMessage("Unexpected null result data");
         }
 
         fileUri = resultData.getData();
         if (fileUri == null) {
-            showError("Unexpected null file URI");
+            showMessage("Unexpected null file URI");
         }
 
         Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
@@ -126,7 +124,7 @@ public class LibraryActivity extends AppCompatActivity {
         // Extract text from file
         String mimeType = getContentResolver().getType(fileUri);
         if (!Arrays.asList(MIME_TYPES).contains(mimeType)) {
-            showError("Unsupported file type: " + mimeType);
+            showMessage("Unsupported file type: " + mimeType);
         }
 
         textExtractor = new TextExtractor(TextExtractionStrategyFactory.createStrategy(this,
@@ -140,9 +138,11 @@ public class LibraryActivity extends AppCompatActivity {
         // Remove the file name's extension
         String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
         createTextFile(fileNameWithoutExtension + ".txt", extractedText);
+        // Notify upload success to user
+        showMessage("File uploaded successfully!");
     }
 
-    private void showError(String message) {
+    private void showMessage(String message) {
         Snackbar.make(uploadFileIcon, message, Snackbar.LENGTH_LONG).show();
     }
 

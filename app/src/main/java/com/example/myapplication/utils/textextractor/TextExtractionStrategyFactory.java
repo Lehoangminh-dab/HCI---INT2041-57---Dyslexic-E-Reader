@@ -25,6 +25,8 @@ public class TextExtractionStrategyFactory {
                 return new EpubTextExtractionStrategy(context);
             case PDF_MIME_TYPE:
                 return new PdfTextExtractionStrategy(context);
+            case PNG_MIME_TYPE:
+                return new PngTextExtractionStrategy(context);
         }
 
         Log.e(LOG_TAG, "Unsupported mime type: " + mimeType);
