@@ -38,10 +38,11 @@ public class FragmentToolbar extends Fragment {
         libraryIcon = view.findViewById(R.id.libraryIcon);
         settingsIcon = view.findViewById(R.id.settingsIcon);
 
-        if (getActivity() instanceof HomeActivity) {
-            homeIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
-            homeButton.setEnabled(false);
-        } else if (getActivity() instanceof LibraryActivity) {
+//        if (getActivity() instanceof HomeActivity) {
+//            homeIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
+//            homeButton.setEnabled(false);
+//        } else
+        if (getActivity() instanceof LibraryActivity) {
             libraryIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             libraryButton.setEnabled(false);
         } else {
@@ -49,10 +50,10 @@ public class FragmentToolbar extends Fragment {
             settingsButton.setEnabled(false);
         }
 
-        homeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), HomeActivity.class);
-            startActivity(intent);
-        });
+//        homeButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), HomeActivity.class);
+//            startActivity(intent);
+//        });
 
         libraryButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), LibraryActivity.class);
