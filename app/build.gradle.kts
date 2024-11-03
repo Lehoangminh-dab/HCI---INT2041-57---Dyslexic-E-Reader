@@ -54,7 +54,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -68,7 +67,15 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
-    implementation("org.zwobble.mammoth:mammoth:1.5.0")
+    implementation("org.zwobble.mammoth:mammoth:1.5.0") {
+        exclude(group = "org.slf4j", module = "slf4j-simple")
+    }
+    implementation("nl.siegmann.epublib:epublib-core:3.1") {
+        exclude(group = "org.slf4j", module = "slf4j-simple")
+        exclude(group = "org.slf4j", module = "slf4j-nop")
+        exclude(group = "xmlpull", module = "xmlpull")
+    }
+    implementation ("org.slf4j:slf4j-android:1.7.25")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

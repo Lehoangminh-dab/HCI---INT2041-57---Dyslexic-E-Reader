@@ -3,11 +3,11 @@ package com.example.myapplication.utils.textextractor;
 import android.net.Uri;
 import android.util.Log;
 
-public class TextExtractorUtil {
+public class TextExtractor {
     private static final String LOG_TAG = "TextExtractorUtil";
     private final TextExtractionStrategy textExtractionStrategy;
 
-    public TextExtractorUtil(TextExtractionStrategy textExtractionStrategy) {
+    public TextExtractor(TextExtractionStrategy textExtractionStrategy) {
         this.textExtractionStrategy = textExtractionStrategy;
     }
 

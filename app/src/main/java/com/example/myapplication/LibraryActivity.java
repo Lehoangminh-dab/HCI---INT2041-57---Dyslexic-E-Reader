@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.ImageView;
@@ -13,7 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.utils.textextractor.DocxTextExtractionStrategy;
 import com.example.myapplication.utils.textextractor.EpubTextExtractionStrategy;
-import com.example.myapplication.utils.textextractor.TextExtractorUtil;
+import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
+import com.example.myapplication.utils.textextractor.TextExtractor;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_UPLOAD_FILE = 1;
     private static final String LOG_TAG = "LibraryActivity";
 
-    private TextExtractorUtil textExtractorUtil;
+    private TextExtractor textExtractor;
     private ImageView uploadFileIcon;
 
     @Override
@@ -95,7 +95,7 @@ public class LibraryActivity extends AppCompatActivity {
      *
      * @see #createTextFile(String, String)
      * @see #initializeTextExtractor(String)
-     * @see TextExtractorUtil#extractText(Uri)
+     * @see TextExtractor#extractText(Uri)
      * @see android.content.Context#getFilesDir()
      */
     @Override
@@ -128,8 +128,9 @@ public class LibraryActivity extends AppCompatActivity {
             showError("Unsupported file type: " + mimeType);
         }
 
-        initializeTextExtractor(mimeType);
-        String extractedText = textExtractorUtil.extractText(fileUri);
+        textExtractor = new TextExtractor(TextExtractionStrategyFactory.createStrategy(this,
+                mimeType));
+        String extractedText = textExtractor.extractText(fileUri);
         Log.d(LOG_TAG, "Extracted text: " + extractedText);
 
         // Get chosen file name
@@ -142,21 +143,6 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void showError(String message) {
         Snackbar.make(uploadFileIcon, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void initializeTextExtractor(String mimeType) {
-        if (mimeType == null) {
-            showError("Null mime type");
-            return;
-        }
-        switch (mimeType) {
-            case DOCX_MIME_TYPE:
-                textExtractorUtil = new TextExtractorUtil(new DocxTextExtractionStrategy(this));
-                break;
-            case EPUB_MIME_TYPE:
-                textExtractorUtil = new TextExtractorUtil(new EpubTextExtractionStrategy());
-                break;
-        }
     }
 
     private void createTextFile(String fileName, String fileContent) {
