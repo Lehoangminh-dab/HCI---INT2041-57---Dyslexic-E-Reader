@@ -50,12 +50,12 @@ public class FragmentToolbar extends Fragment {
 
         homeButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), HomeActivity.class);
-            startActivity(intent);
+//            startActivity(intent);
         });
 
         libraryButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), LibraryActivity.class);
-            startActivity(intent);
+//            startActivity(intent);
         });
 
         settingsButton.setOnClickListener(v -> {
