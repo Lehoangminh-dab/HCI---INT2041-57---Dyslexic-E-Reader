@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -94,7 +95,7 @@ public class LibraryActivity extends AppCompatActivity {
      * @throws IOException if file creation or writing fails (handled internally with logging)
      *
      * @see #createTextFile(String, String)
-     * @see #initializeTextExtractor(String)
+     * @see TextExtractionStrategyFactory#createStrategy(Context, String) 
      * @see TextExtractor#extractText(Uri)
      * @see android.content.Context#getFilesDir()
      */

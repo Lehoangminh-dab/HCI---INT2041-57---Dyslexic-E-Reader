@@ -23,6 +23,8 @@ public class TextExtractionStrategyFactory {
                 return new DocxTextExtractionStrategy(context);
             case EPUB_MIME_TYPE:
                 return new EpubTextExtractionStrategy(context);
+            case PDF_MIME_TYPE:
+                return new PdfTextExtractionStrategy(context);
         }
 
         Log.e(LOG_TAG, "Unsupported mime type: " + mimeType);

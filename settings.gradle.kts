@@ -19,6 +19,9 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://github.com/psiegman/mvn-repo/raw/master/releases")
         }
+        maven {
+            url = uri("https://repo.itextsupport.com/releases")
+        }
     }
 }
 
