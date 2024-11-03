@@ -23,6 +23,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Load in LibraryActivity for testing.
-//        startActivity(new Intent(this, LibraryActivity.class));
+        startActivity(new Intent(this, LibraryActivity.class));
     }
 }
