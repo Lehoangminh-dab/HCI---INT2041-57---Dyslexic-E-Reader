@@ -16,6 +16,7 @@ import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class PngTextExtractionStrategy implements TextExtractionStrategy {
     private static final String LOG_TAG = "PngTextExtractionStrategy";
@@ -35,19 +36,38 @@ public class PngTextExtractionStrategy implements TextExtractionStrategy {
             Log.e(LOG_TAG, "Error reading image file: " + e);
         }
 
-        Task<Text> result = textRecognizer.process(image)
-                .addOnSuccessListener(new OnSuccessListener<Text>() {
-            @Override
-            public void onSuccess(Text visionText) {
-                Log.d(LOG_TAG, "Image text recognition successful. ");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(LOG_TAG, "Error extracting text from image: " + e);
-            }
-        });
+        try {
+            return extractTextFromImage(image);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error extracting text from image: " + e);
+            throw new RuntimeException(e);
+        }
+    }
 
-        return "Png text extraction not implemented";
+    private String extractTextFromImage(InputImage image) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        // Process the image to retrieve the text.
+        textRecognizer.process(image)
+                .addOnSuccessListener(new OnSuccessListener<Text>() {
+                    @Override
+                    public void onSuccess(Text visionText) {
+                        Log.d(LOG_TAG, "Image text extraction successful.");
+                        future.complete(visionText.getText());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                       Log.e(LOG_TAG, "Error extracting text from image: " + e);
+                       future.completeExceptionally(e);
+                    }
+                });
+
+        try {
+            return future.get(); // This will block until the result is available
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Error waiting for text extraction result: " + e);
+            return null;
+        }
     }
 }
