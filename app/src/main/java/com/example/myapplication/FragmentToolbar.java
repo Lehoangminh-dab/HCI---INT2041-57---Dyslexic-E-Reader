@@ -60,10 +60,10 @@ public class FragmentToolbar extends Fragment {
             startActivity(intent);
         });
 
-        settingsButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(intent);
-        });
+//        settingsButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), SettingsActivity.class);
+//            startActivity(intent);
+//        });
 
         return view;
     }
