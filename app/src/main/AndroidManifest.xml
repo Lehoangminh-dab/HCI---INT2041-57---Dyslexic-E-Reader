@@ -20,6 +20,9 @@
         <activity
             android:name=".LibraryActivity"
             android:exported="false"/>
+        <activity
+            android:name=".MainMenuActivity"
+            android:exported="true"/>
 <!--        <activity-->
 <!--            android:name=".SettingsActivity"-->
 <!--            android:exported="true"-->
@@ -36,4 +39,3 @@
         </activity>
     </application>
 </manifest>
-

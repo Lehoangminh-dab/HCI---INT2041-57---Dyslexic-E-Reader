@@ -6,4 +6,8 @@
     <string name="library_title">Library</string>
     <string name="title_activity_setting">Setting</string>
     <string name="settings">Settings</string>
+    <string name="main_menu_title">Hello User</string>
+    <string name="recommended">Recommended for you</string>
+    <string name="currently_reading">Currently Reading</string>
+    <string name="favourite_list">Favourtie List</string>
 </resources>
