@@ -76,7 +76,7 @@
             android:layout_marginTop="90dp"
             android:gravity="top"
             android:lineSpacingExtra="25sp"
-            android:text="Learn English online and improve your skills through our high - quality"
+            android:text=" "
             android:textSize="50sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

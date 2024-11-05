@@ -39,7 +39,6 @@ public class ReadingActivity extends AppCompatActivity {
     private String[] pages;  // Mảng chứa các đoạn văn của cuốn sách
     private int currentPage = 0;
     private SharedPreferences sharedPreferences;
-    private Rect highlightBox = new Rect(); // Dùng để lưu trữ kích thước của box highlight
 
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
@@ -347,7 +346,9 @@ public class ReadingActivity extends AppCompatActivity {
         removeHighlightRunnable = new Runnable() {
             @Override
             public void run() {
-                text.setText(pages[currentPage]);
+                if (currentPage < pages.length) {
+                    text.setText(pages[currentPage]);
+                }
             }
         };
         handler.postDelayed(removeHighlightRunnable, 2500);
@@ -383,6 +384,4 @@ public class ReadingActivity extends AppCompatActivity {
             import_contacts_ic.clearColorFilter();
         }
     }
-
-
 }
