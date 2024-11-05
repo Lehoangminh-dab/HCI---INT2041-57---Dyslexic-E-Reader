@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.MotionEvent;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.text.Spannable;
 import android.text.SpannableString;
 
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -27,9 +29,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ReadingActivity extends AppCompatActivity {
 
-    private TextView text;
+    private TextView textView;
     private ImageView arrowLeftBtn, arrowRightBtn, import_contacts_ic;
     private ImageView closeBtn, bookmarkBtn, tuneBtn;
     private Button finishedBtn;
@@ -40,6 +45,20 @@ public class ReadingActivity extends AppCompatActivity {
     private int currentPage = 0;
     private SharedPreferences sharedPreferences;
 
+    private String content = "My school is my favorite place. I have" +
+            " many friends in my school who always help me. My teachers" +
+            " are very friendly and take care of my parents. Our school" +
+            " is very beautiful. It has many classrooms, a playground, a" +
+            " garden, and canteen. Our school is very big and famous. People" +
+            " living in our city send their children to study here. Our" +
+            " school also provides free education to poor children. Every" +
+            " student studying here is supports and plays with us. Our seniors" +
+            " are very friendly as well. Our school also does social services" +
+            " like planting trees every month. I am proud of my school, and" +
+            " love it very much. Engage your kid into diverse thoughts and" +
+            " motivate them to improve their English with our Essay for Class" +
+            " 1 and avail the Simple Essays suitable for them.";
+
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +66,7 @@ public class ReadingActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reading);
 
-        text = findViewById(R.id.text);
+        textView = findViewById(R.id.text);
         arrowLeftBtn = findViewById(R.id.arrow_left_btn);
         arrowRightBtn = findViewById(R.id.arrow_right_btn);
         import_contacts_ic = findViewById(R.id.import_contacts);
@@ -58,14 +77,6 @@ public class ReadingActivity extends AppCompatActivity {
         finishedBtn = findViewById(R.id.finished_btn);
 
         readingProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
-
-        pages = new String[]{
-                "Trang 1 Nội dung của trang đầu tiên...",
-                "Trang 2 Nội dung của trang tiếp theo...",
-                "Trang 3 Nội dung của trang kế tiếp...",
-                "Trang 4 Nội dung của trang kế tiếp...",
-                "Trang 5 Nội dung của trang cuối ...",
-        };
 
         findViewById(R.id.import_contacts).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,15 +139,61 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
+        // Sử dụng ViewTreeObserver để đợi cho đến khi TextView có kích thước chính xác
+        textView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                textView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                // Sau khi TextView đã có kích thước, thực hiện chia nội dung thành các trang
+                pages = splitContentToPages(content);
+
+                // Cập nhật trang đầu tiên
+                updatePage();
+            }
+        });
+
         // Khởi tạo SharedPreferences để lưu chế độ highlight
         sharedPreferences = getSharedPreferences("HighlightPrefs", MODE_PRIVATE);
         String highlightMode = sharedPreferences.getString("highlight_mode", "WORD");
 
-        // Cập nhật trang ban đầu
-        updatePage();
-
         // Áp dụng chế độ highlight đã lưu
         applyHighlightMode(highlightMode);
+    }
+
+    // Phương thức chia nhỏ nội dung thành các trang dựa trên kích thước TextView
+    private String[] splitContentToPages(String content) {
+        List<String> pageList = new ArrayList<>();
+        int start = 0;
+        TextPaint textPaint = textView.getPaint();
+        int width = textView.getWidth();
+        int height = textView.getHeight();
+        int linesPerPage = height / textView.getLineHeight();
+
+        while (start < content.length()) {
+            StaticLayout layout = new StaticLayout(
+                    content.substring(start),
+                    textPaint,
+                    width,
+                    Layout.Alignment.ALIGN_NORMAL,
+                    1.0f,
+                    0.0f,
+                    false
+            );
+
+            int end = start;
+            int lines = 0;
+
+            for (int i = 0; i < layout.getLineCount() && lines < linesPerPage; i++) {
+                end = start + layout.getLineEnd(i);
+                lines++;
+            }
+
+            pageList.add(content.substring(start, end).trim());
+            start = end;
+        }
+
+        return pageList.toArray(new String[0]);
     }
 
     private void updatePage() {
@@ -144,8 +201,8 @@ public class ReadingActivity extends AppCompatActivity {
 
         // Hiển thị các trang nội dung
         if (currentPage < pages.length - 1) {  // Trang 1 đến trang 4
-            text.setVisibility(View.VISIBLE);
-            text.setText(pages[currentPage]);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(pages[currentPage]);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên các trang nội dung
 
             // Hiển thị các nút bookmark và tune
@@ -159,8 +216,8 @@ public class ReadingActivity extends AppCompatActivity {
             arrowRightBtn.setAlpha(1.0f);  // Nút phải rõ trên các trang từ 1 đến 4
 
         } else if (currentPage == pages.length - 1) {  // Trang 5
-            text.setVisibility(View.VISIBLE);
-            text.setText(pages[currentPage]);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(pages[currentPage]);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên trang 5
 
             // Giữ các nút bookmark và tune hiện trên trang cuối
@@ -174,7 +231,7 @@ public class ReadingActivity extends AppCompatActivity {
             arrowRightBtn.setAlpha(1.0f);  // Nút phải rõ trên trang cuối nội dung
 
         } else if (currentPage == pages.length) {  // FrameLayout sau trang cuối
-            text.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
             completionOverlay.setVisibility(View.VISIBLE);  // Hiển thị overlay ở trang FrameLayout
             disableButtons();  // Ẩn bookmark và tune ở FrameLayout cuối
 
@@ -197,7 +254,7 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void initTouchEventWord() {
-        text.setOnTouchListener(new View.OnTouchListener() {
+        textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getPointerCount() == 1) {
@@ -216,7 +273,7 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void initTouchEventRuler() {
-        text.setOnTouchListener(new View.OnTouchListener() {
+        textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getPointerCount() == 1) {
@@ -241,12 +298,12 @@ public class ReadingActivity extends AppCompatActivity {
         String pageText = pages[currentPage];
         Spannable spannableText = new SpannableString(pageText);
 
-        int offset = text.getOffsetForPosition(touchX, touchY);
+        int offset = textView.getOffsetForPosition(touchX, touchY);
         int start = findWordStart(pageText, offset);
         int end = findWordEnd(pageText, offset);
 
         applyDimEffectExcept(spannableText, start, end);
-        text.setText(spannableText);
+        textView.setText(spannableText);
     }
 
     private void highlightLineAtTouch(MotionEvent event) {
@@ -254,14 +311,14 @@ public class ReadingActivity extends AppCompatActivity {
         String pageText = pages[currentPage];
         Spannable spannableText = new SpannableString(pageText);
 
-        Layout layout = text.getLayout();
+        Layout layout = textView.getLayout();
         if (layout != null) {
             int line = layout.getLineForVertical(touchY);
             int lineStart = layout.getLineStart(line);
             int lineEnd = layout.getLineEnd(line);
 
             applyDimEffectExcept(spannableText, lineStart, lineEnd);
-            text.setText(spannableText);
+            textView.setText(spannableText);
         }
     }
 
@@ -298,7 +355,7 @@ public class ReadingActivity extends AppCompatActivity {
     }
 
     private void initTouchEventDark() {
-        text.setOnTouchListener(new View.OnTouchListener() {
+        textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getPointerCount() == 1) {
@@ -326,13 +383,13 @@ public class ReadingActivity extends AppCompatActivity {
         String pageText = pages[currentPage];
         Spannable spannableText = new SpannableString(pageText);
 
-        int offset = text.getOffsetForPosition(touchX, touchY);
+        int offset = textView.getOffsetForPosition(touchX, touchY);
         int start = findWordStart(pageText, offset);
         int end = findWordEnd(pageText, offset);
 
         // Áp dụng hiệu ứng dark highlight cho từ được chọn
         applyDarkHighlight(spannableText, start, end);
-        text.setText(spannableText);
+        textView.setText(spannableText);
     }
 
     private void applyDarkHighlight(Spannable spannableText, int start, int end) {
@@ -347,7 +404,7 @@ public class ReadingActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (currentPage < pages.length) {
-                    text.setText(pages[currentPage]);
+                    textView.setText(pages[currentPage]);
                 }
             }
         };
@@ -374,7 +431,7 @@ public class ReadingActivity extends AppCompatActivity {
             import_contacts_ic.setColorFilter(ContextCompat.getColor(this, R.color.white));
         } else if (mode.equals("OFF")) {
             // Nếu chế độ là OFF, hủy sự kiện chạm để không thể highlight
-            text.setOnTouchListener(null);
+            textView.setOnTouchListener(null);
 
             closeBtn.clearColorFilter();
             bookmarkBtn.clearColorFilter();
