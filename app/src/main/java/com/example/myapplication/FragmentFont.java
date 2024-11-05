@@ -20,6 +20,14 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.model.ColorRule;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 public class FragmentFont extends Fragment {
 
     private SharedPreferences sharedPreferences;
@@ -29,6 +37,8 @@ public class FragmentFont extends Fragment {
     private int size;
     private float lineSpace;
     private int wordSpace;
+    private List<ColorRule> colorRuleList;
+
     private ImageView backButton;
     private LinearLayout maliFontButton;
     private TextView maliText;
@@ -169,6 +179,10 @@ public class FragmentFont extends Fragment {
         size = sharedPreferences.getInt("size", 42);
         lineSpace = sharedPreferences.getFloat("lineSpace", 1);
         wordSpace= sharedPreferences.getInt("wordSpace", 1);
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
+        Type type = new TypeToken<List<ColorRule>>() {}.getType();
+        colorRuleList = gson.fromJson(jsonRetrieved, type);
 
         if (fontName.contains("mali")) {
             maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
@@ -205,7 +219,8 @@ public class FragmentFont extends Fragment {
         } else {
             updatedText = originalText.replaceAll("\\s+", "      ");
         }
-        sampleTextView.setText(updatedText);
+        TextColorUtils.applyColorToText(requireContext(), updatedText, sampleTextView, colorRuleList);
+//        sampleTextView.setText(updatedText);
     }
 
     @Override
