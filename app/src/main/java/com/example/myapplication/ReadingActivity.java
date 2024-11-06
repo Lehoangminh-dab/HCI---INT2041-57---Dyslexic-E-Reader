@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Layout;
+import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -362,8 +363,6 @@ public class ReadingActivity extends AppCompatActivity {
         textView.setText(spannableString);
     }
 
-
-
     private void highlightLineAtTouch(MotionEvent event) {
         int touchY = (int) event.getY();
 
@@ -470,7 +469,6 @@ public class ReadingActivity extends AppCompatActivity {
 
         // Tô sáng từ được chọn với khung chữ nhật bao quanh
         spannableText.setSpan(new BackgroundColorSpan(Color.parseColor("#FCECCB")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu nền cho từ được chọn
-        spannableText.setSpan(new ForegroundColorSpan(Color.BLACK), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu chữ của từ được chọn
     }
 
     private void scheduleRemoveHighlight() {
@@ -483,7 +481,7 @@ public class ReadingActivity extends AppCompatActivity {
                 }
             }
         };
-        handler.postDelayed(removeHighlightRunnable, 2500);
+        handler.postDelayed(removeHighlightRunnable, 2000);
     }
 
 
