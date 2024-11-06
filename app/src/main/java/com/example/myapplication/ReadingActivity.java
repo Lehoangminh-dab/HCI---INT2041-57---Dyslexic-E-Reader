@@ -352,32 +352,34 @@ public class ReadingActivity extends AppCompatActivity {
         int touchX = (int) event.getX();
         int touchY = (int) event.getY();
 
-        String pageText = pages[currentPage];
-        Spannable spannableText = new SpannableString(pageText);
-
+        // Sử dụng trực tiếp spannableString để giữ lại cài đặt font và khoảng cách
         int offset = textView.getOffsetForPosition(touchX, touchY);
-        int start = findWordStart(pageText, offset);
-        int end = findWordEnd(pageText, offset);
+        int start = findWordStart(spannableString.toString(), offset);
+        int end = findWordEnd(spannableString.toString(), offset);
 
-        applyDimEffectExcept(spannableText, start, end);
-        textView.setText(spannableText);
+        // Thêm hiệu ứng dim (làm mờ) lên spannableString
+        applyDimEffectExcept(spannableString, start, end);
+        textView.setText(spannableString);
     }
+
+
 
     private void highlightLineAtTouch(MotionEvent event) {
         int touchY = (int) event.getY();
-        String pageText = pages[currentPage];
-        Spannable spannableText = new SpannableString(pageText);
 
+        // Lấy text layout từ textView
         Layout layout = textView.getLayout();
         if (layout != null) {
             int line = layout.getLineForVertical(touchY);
             int lineStart = layout.getLineStart(line);
             int lineEnd = layout.getLineEnd(line);
 
-            applyDimEffectExcept(spannableText, lineStart, lineEnd);
-            textView.setText(spannableText);
+            // Áp dụng highlight trực tiếp lên spannableString
+            applyDimEffectExcept(spannableString, lineStart, lineEnd);
+            textView.setText(spannableString);
         }
     }
+
 
     private int findWordStart(String text, int offset) {
         while (offset > 0 && !Character.isWhitespace(text.charAt(offset - 1))) {
@@ -393,10 +395,15 @@ public class ReadingActivity extends AppCompatActivity {
         return offset;
     }
 
+
     private void applyDimEffectExcept(Spannable spannableText, int start, int end) {
         String text = spannableText.toString();
         int wordStart = 0;
 
+        // Capture existing spans in the highlighted region
+        Object[] originalSpans = spannableText.getSpans(start, end, Object.class);
+
+        // Apply dim effect to all words except the highlighted word
         for (int i = 0; i < text.length(); i++) {
             if (Character.isWhitespace(text.charAt(i)) || i == text.length() - 1) {
                 int wordEnd = (i == text.length() - 1) ? i + 1 : i;
@@ -409,7 +416,19 @@ public class ReadingActivity extends AppCompatActivity {
                 wordStart = i + 1;
             }
         }
+
+        // Remove any dim effect on the highlighted word (start to end) by clearing any applied spans
+        spannableText.removeSpan(new ForegroundColorSpan(Color.GRAY));
+
+        // Reapply original spans to restore initial appearance
+        for (Object span : originalSpans) {
+            int spanStart = spannableText.getSpanStart(span);
+            int spanEnd = spannableText.getSpanEnd(span);
+            int spanFlags = spannableText.getSpanFlags(span);
+            spannableText.setSpan(span, spanStart, spanEnd, spanFlags);
+        }
     }
+
 
     private void initTouchEventDark() {
         textView.setOnTouchListener(new View.OnTouchListener() {
@@ -437,17 +456,15 @@ public class ReadingActivity extends AppCompatActivity {
         int touchX = (int) event.getX();
         int touchY = (int) event.getY();
 
-        String pageText = pages[currentPage];
-        Spannable spannableText = new SpannableString(pageText);
-
         int offset = textView.getOffsetForPosition(touchX, touchY);
-        int start = findWordStart(pageText, offset);
-        int end = findWordEnd(pageText, offset);
+        int start = findWordStart(spannableString.toString(), offset);
+        int end = findWordEnd(spannableString.toString(), offset);
 
-        // Áp dụng hiệu ứng dark highlight cho từ được chọn
-        applyDarkHighlight(spannableText, start, end);
-        textView.setText(spannableText);
+        // Áp dụng hiệu ứng dark highlight lên spannableString
+        applyDarkHighlight(spannableString, start, end);
+        textView.setText(spannableString);
     }
+
 
     private void applyDarkHighlight(Spannable spannableText, int start, int end) {
 
@@ -462,11 +479,13 @@ public class ReadingActivity extends AppCompatActivity {
             public void run() {
                 if (currentPage < pages.length) {
                     textView.setText(pages[currentPage]);
+                    updatePage();
                 }
             }
         };
         handler.postDelayed(removeHighlightRunnable, 2500);
     }
+
 
     private void applyHighlightMode(String mode) {
         ConstraintLayout readingLayout = findViewById(R.id.reading_layout);
