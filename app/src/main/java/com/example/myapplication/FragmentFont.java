@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.model.ColorRule;
 
+import com.example.myapplication.utils.TextColorUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -219,8 +220,7 @@ public class FragmentFont extends Fragment {
         } else {
             updatedText = originalText.replaceAll("\\s+", "      ");
         }
-        TextColorUtils.applyColorToText(requireContext(), updatedText, sampleTextView, colorRuleList);
-//        sampleTextView.setText(updatedText);
+        sampleTextView.setText(TextColorUtils.applyColorToText(requireContext(), updatedText, colorRuleList));
     }
 
     @Override

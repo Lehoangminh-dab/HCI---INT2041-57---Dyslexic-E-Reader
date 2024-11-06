@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.utils;
 
 import android.content.Context;
 import android.text.Spannable;
@@ -8,18 +8,19 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.myapplication.R;
 import com.example.myapplication.model.ColorRule;
 
 import java.util.List;
 
 public class TextColorUtils {
-    public static void applyColorToText(Context context, String text, TextView textView, List<ColorRule> rules) {
+    public static SpannableString applyColorToText(Context context, String text, List<ColorRule> rules) {
         SpannableString spannableString = new SpannableString(text);
 
         // Cần tìm data chứa các từ có digraphs
         String[] digraphs = {"ch", "sh", "th", "wh", "ph"};
 
-//        boolean isStartOfWord = true;
+        boolean isStartOfWord = true;
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -46,15 +47,15 @@ public class TextColorUtils {
             }
 
 
-//            if (isStartOfWord && Character.isLetter(c)) {
-//                spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.blue)), i, i + 1,
-//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                isStartOfWord = false;
-//            }
-//
-//            if (Character.isWhitespace(c)) {
-//                isStartOfWord = true;
-//            }
+            if (isStartOfWord && Character.isLetter(c)) {
+                spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context, R.color.pink)), i, i + 1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                isStartOfWord = false;
+            }
+
+            if (Character.isWhitespace(c)) {
+                isStartOfWord = true;
+            }
 
             if (i < text.length() - 1) {
                 String pair = text.substring(i, i + 2).toLowerCase();
@@ -90,7 +91,7 @@ public class TextColorUtils {
 
         }
 
-        textView.setText(spannableString);
+        return spannableString;
     }
 }
 

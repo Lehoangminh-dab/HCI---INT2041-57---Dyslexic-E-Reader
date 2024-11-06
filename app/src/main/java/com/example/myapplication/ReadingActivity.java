@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Layout;
@@ -28,7 +29,14 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
+import com.example.myapplication.model.ColorRule;
+import com.example.myapplication.utils.TextColorUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +52,11 @@ public class ReadingActivity extends AppCompatActivity {
     private String[] pages;  // Mảng chứa các đoạn văn của cuốn sách
     private int currentPage = 0;
     private SharedPreferences sharedPreferences;
+    private String fontName;
+    private int size;
+    private float lineSpace;
+    private int wordSpace;
+    private List<ColorRule> colorRuleList;
 
     private String content = "My school is my favorite place. I have" +
             " many friends in my school who always help me. My teachers" +
@@ -58,6 +71,7 @@ public class ReadingActivity extends AppCompatActivity {
             " love it very much. Engage your kid into diverse thoughts and" +
             " motivate them to improve their English with our Essay for Class" +
             " 1 and avail the Simple Essays suitable for them.";
+    SpannableString spannableString;
 
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
@@ -89,7 +103,7 @@ public class ReadingActivity extends AppCompatActivity {
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ReadingActivity.this, MainActivity.class);
+                Intent intent = new Intent(ReadingActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
@@ -134,7 +148,7 @@ public class ReadingActivity extends AppCompatActivity {
         finishedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ReadingActivity.this, MainActivity.class);
+                Intent intent = new Intent(ReadingActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
@@ -154,11 +168,26 @@ public class ReadingActivity extends AppCompatActivity {
         });
 
         // Khởi tạo SharedPreferences để lưu chế độ highlight
-        sharedPreferences = getSharedPreferences("HighlightPrefs", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String highlightMode = sharedPreferences.getString("highlight_mode", "WORD");
 
         // Áp dụng chế độ highlight đã lưu
         applyHighlightMode(highlightMode);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fontName = sharedPreferences.getString("font", "dyslexic");
+        size = sharedPreferences.getInt("size", 42);
+        lineSpace = sharedPreferences.getFloat("lineSpace", 1);
+        wordSpace= sharedPreferences.getInt("wordSpace", 1);
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
+        Type type = new TypeToken<List<ColorRule>>() {}.getType();
+        colorRuleList = gson.fromJson(jsonRetrieved, type);
+
+//        updatePage();
     }
 
     // Phương thức chia nhỏ nội dung thành các trang dựa trên kích thước TextView
@@ -200,9 +229,23 @@ public class ReadingActivity extends AppCompatActivity {
         FrameLayout completionOverlay = findViewById(R.id.completion_overlay);
 
         // Hiển thị các trang nội dung
-        if (currentPage < pages.length - 1) {  // Trang 1 đến trang 4
+        if (currentPage < pages.length - 1) {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(pages[currentPage]);
+            String tempString = pages[currentPage];
+            int fontId = getResources().getIdentifier(fontName, "font", this.getPackageName());
+            Typeface typeface = ResourcesCompat.getFont(this, fontId);
+            textView.setTypeface(typeface);
+            textView.setTextSize(size);
+            textView.setLineSpacing(0, lineSpace);
+            if (wordSpace == 1) {
+                tempString = tempString.replaceAll("\\s+", "  ");
+            } else if (wordSpace == 2) {
+                tempString = tempString.replaceAll("\\s+", "    ");
+            } else {
+                tempString = tempString.replaceAll("\\s+", "      ");
+            }
+            spannableString = TextColorUtils.applyColorToText(this, tempString, colorRuleList);
+            textView.setText(spannableString);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên các trang nội dung
 
             // Hiển thị các nút bookmark và tune
@@ -217,7 +260,21 @@ public class ReadingActivity extends AppCompatActivity {
 
         } else if (currentPage == pages.length - 1) {  // Trang 5
             textView.setVisibility(View.VISIBLE);
-            textView.setText(pages[currentPage]);
+            String tempString = pages[currentPage];
+            int fontId = getResources().getIdentifier(fontName, "font", this.getPackageName());
+            Typeface typeface = ResourcesCompat.getFont(this, fontId);
+            textView.setTypeface(typeface);
+            textView.setTextSize(size);
+            textView.setLineSpacing(0, lineSpace);
+            if (wordSpace == 1) {
+                tempString = tempString.replaceAll("\\s+", "  ");
+            } else if (wordSpace == 2) {
+                tempString = tempString.replaceAll("\\s+", "    ");
+            } else {
+                tempString = tempString.replaceAll("\\s+", "      ");
+            }
+            spannableString = TextColorUtils.applyColorToText(this, tempString, colorRuleList);
+            textView.setText(spannableString);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên trang 5
 
             // Giữ các nút bookmark và tune hiện trên trang cuối

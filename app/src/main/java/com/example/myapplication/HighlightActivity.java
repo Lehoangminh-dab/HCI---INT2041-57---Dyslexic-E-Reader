@@ -180,7 +180,7 @@ public class HighlightActivity extends AppCompatActivity {
     }
 
     private void saveHighlightMode(HighlightMode mode) {
-        SharedPreferences sharedPreferences = getSharedPreferences("HighlightPrefs", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("highlight_mode", mode.name()); // Lưu tên của chế độ highlight
         editor.apply();
