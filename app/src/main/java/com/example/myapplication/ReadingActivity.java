@@ -349,22 +349,39 @@ public class ReadingActivity extends AppCompatActivity {
         });
     }
 
+
     private void highlightWordAtTouch(MotionEvent event) {
         int touchX = (int) event.getX();
         int touchY = (int) event.getY();
 
-        // Sử dụng trực tiếp spannableString để giữ lại cài đặt font và khoảng cách
+        // Xóa tất cả hiệu ứng dim cũ trước khi áp dụng highlight mới
+        clearDimEffect(spannableString);
+
         int offset = textView.getOffsetForPosition(touchX, touchY);
         int start = findWordStart(spannableString.toString(), offset);
         int end = findWordEnd(spannableString.toString(), offset);
 
-        // Thêm hiệu ứng dim (làm mờ) lên spannableString
+        // Áp dụng dim cho tất cả các từ khác, giữ nguyên hiệu ứng màu gốc cho từ được chọn
         applyDimEffectExcept(spannableString, start, end);
         textView.setText(spannableString);
     }
 
+    private void clearDimEffect(Spannable spannableText) {
+        // Loại bỏ tất cả các ForegroundColorSpan có màu dim (xám)
+        ForegroundColorSpan[] spans = spannableText.getSpans(0, spannableText.length(), ForegroundColorSpan.class);
+        for (ForegroundColorSpan span : spans) {
+            if (span.getForegroundColor() == Color.GRAY) {
+                spannableText.removeSpan(span);
+            }
+        }
+    }
+
+
     private void highlightLineAtTouch(MotionEvent event) {
         int touchY = (int) event.getY();
+
+        // Xóa hiệu ứng dim cũ
+        clearDimEffect(spannableString);
 
         // Lấy text layout từ textView
         Layout layout = textView.getLayout();
@@ -373,11 +390,12 @@ public class ReadingActivity extends AppCompatActivity {
             int lineStart = layout.getLineStart(line);
             int lineEnd = layout.getLineEnd(line);
 
-            // Áp dụng highlight trực tiếp lên spannableString
+            // Áp dụng highlight cho dòng hiện tại
             applyDimEffectExcept(spannableString, lineStart, lineEnd);
             textView.setText(spannableString);
         }
     }
+
 
 
     private int findWordStart(String text, int offset) {
@@ -399,10 +417,7 @@ public class ReadingActivity extends AppCompatActivity {
         String text = spannableText.toString();
         int wordStart = 0;
 
-        // Capture existing spans in the highlighted region
-        Object[] originalSpans = spannableText.getSpans(start, end, Object.class);
-
-        // Apply dim effect to all words except the highlighted word
+        // Áp dụng dim cho tất cả các từ ngoại trừ từ được chọn
         for (int i = 0; i < text.length(); i++) {
             if (Character.isWhitespace(text.charAt(i)) || i == text.length() - 1) {
                 int wordEnd = (i == text.length() - 1) ? i + 1 : i;
@@ -415,19 +430,7 @@ public class ReadingActivity extends AppCompatActivity {
                 wordStart = i + 1;
             }
         }
-
-        // Remove any dim effect on the highlighted word (start to end) by clearing any applied spans
-        spannableText.removeSpan(new ForegroundColorSpan(Color.GRAY));
-
-        // Reapply original spans to restore initial appearance
-        for (Object span : originalSpans) {
-            int spanStart = spannableText.getSpanStart(span);
-            int spanEnd = spannableText.getSpanEnd(span);
-            int spanFlags = spannableText.getSpanFlags(span);
-            spannableText.setSpan(span, spanStart, spanEnd, spanFlags);
-        }
     }
-
 
     private void initTouchEventDark() {
         textView.setOnTouchListener(new View.OnTouchListener() {
@@ -455,14 +458,27 @@ public class ReadingActivity extends AppCompatActivity {
         int touchX = (int) event.getX();
         int touchY = (int) event.getY();
 
+        // Xóa hiệu ứng highlight dark cũ
+        clearDarkHighlight(spannableString);
+
         int offset = textView.getOffsetForPosition(touchX, touchY);
         int start = findWordStart(spannableString.toString(), offset);
         int end = findWordEnd(spannableString.toString(), offset);
 
-        // Áp dụng hiệu ứng dark highlight lên spannableString
+        // Áp dụng highlight dark cho từ hiện tại
         applyDarkHighlight(spannableString, start, end);
         textView.setText(spannableString);
     }
+
+    private void clearDarkHighlight(Spannable spannableText) {
+        BackgroundColorSpan[] spans = spannableText.getSpans(0, spannableText.length(), BackgroundColorSpan.class);
+        for (BackgroundColorSpan span : spans) {
+            if (span.getBackgroundColor() == Color.parseColor("#FCECCB")) { // Màu của highlight dark
+                spannableText.removeSpan(span);
+            }
+        }
+    }
+
 
 
     private void applyDarkHighlight(Spannable spannableText, int start, int end) {
