@@ -107,5 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         });
+
+        // Load in LibraryActivity for testing.
+        startActivity(new Intent(this, LibraryActivity.class));
     }
 }

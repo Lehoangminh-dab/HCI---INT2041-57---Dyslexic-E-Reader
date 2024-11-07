@@ -37,6 +37,7 @@ public class FragmentToolbar extends Fragment {
         libraryIcon = view.findViewById(R.id.libraryIcon);
         settingsIcon = view.findViewById(R.id.settingsIcon);
 
+
         if (getActivity() instanceof HomeActivity) {
             homeIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             homeButton.setEnabled(false);
