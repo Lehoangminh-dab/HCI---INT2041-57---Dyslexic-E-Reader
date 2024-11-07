@@ -72,13 +72,13 @@
                 android:text="Magic Finger"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:textSize="22sp"/>
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textColor="@color/opacity75_black"
                 android:text="Use your finger to stay focused" />
         </LinearLayout>

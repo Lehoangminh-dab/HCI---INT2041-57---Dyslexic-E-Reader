@@ -71,7 +71,7 @@ public class FragmentHighlight extends Fragment {
             replaceFragment(fragmentSettingsMenu);
         });
 
-        highlightSwitch.setChecked(onHighLight);
+        highlightSwitch.setChecked(true);
         highlightSwitch.getThumbDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         setupHighlightSwitch();
