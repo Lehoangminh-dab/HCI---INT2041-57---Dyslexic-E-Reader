@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1053594487701",
+    "project_id": "dyslexic-ereader",
+    "storage_bucket": "dyslexic-ereader.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053594487701:android:53a7b04c11ddcd7d1ec49c",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnsuSPZ-cbAW-JA14BB5iMNxJsbiStTpg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

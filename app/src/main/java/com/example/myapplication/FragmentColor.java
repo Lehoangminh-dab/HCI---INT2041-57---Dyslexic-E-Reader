@@ -1,0 +1,393 @@
+package com.example.myapplication;
+
+import static android.content.Context.MODE_PRIVATE;
+
+import android.app.Dialog;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.myapplication.adapter.ColorRuleAdapter;
+import com.example.myapplication.controller.ColorRuleController;
+import com.example.myapplication.model.ColorRule;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class FragmentColor extends Fragment {
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private int containerId;
+    private String nameRule;
+    private String describeRule;
+    private int color;
+    private ColorRuleController colorRuleController;
+
+    private ImageView backButton;
+    private ListView colorRuleListView;
+    private List<ColorRule> ruleList;
+    private ColorRuleAdapter adapter;
+    private LinearLayout addRuleButton;
+
+    public FragmentColor() {
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_color, container, false);
+
+        sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            containerId = args.getInt("containerId", -1);
+        }
+
+        colorRuleController = new ColorRuleController(requireActivity());
+
+        backButton = view.findViewById(R.id.backBtn);
+        colorRuleListView = view.findViewById(R.id.colorRuleList);
+        ruleList = new ArrayList<>();
+        adapter = new ColorRuleAdapter(requireActivity(), ruleList);
+        colorRuleListView.setAdapter(adapter);
+        if (ruleList.isEmpty()) {
+            Log.e("1", "1");
+        } else {
+            Log.e("0", "0");
+        }
+
+        addRuleButton = view.findViewById(R.id.addRuleBtn);
+
+        backButton.setOnClickListener(v -> {
+            FragmentSettingsMenu fragmentSettingsMenu = new FragmentSettingsMenu();
+            fragmentSettingsMenu.setArguments(args);
+            replaceFragment(fragmentSettingsMenu);
+        });
+
+        colorRuleListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            Handler handler = new Handler();
+            Runnable runnable;
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                runnable = () -> showChangeColorRuleDialog(position);
+                handler.postDelayed(runnable, 2000); // 2000ms = 2 giây
+                return true;
+            }
+        });
+
+        addRuleButton.setOnClickListener(v -> showAddColorRuleDialog());
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        handleReceivedRule();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Gson gson = new Gson();
+        String json = gson.toJson(ruleList);
+        editor.putString("colorRules", json);
+        editor.apply();
+    }
+
+    private void showAddColorRuleDialog() {
+        Dialog dialog = new Dialog(requireActivity());
+        dialog.setContentView(R.layout.dialog_add_color_rule_layout);
+
+        int red = ContextCompat.getColor(requireContext(), R.color.red);
+        int opacity_red = ContextCompat.getColor(requireContext(), R.color.opacity_red);
+        int blue = ContextCompat.getColor(requireContext(), R.color.blue);
+        int opacity_blue = ContextCompat.getColor(requireContext(), R.color.opacity_blue);
+        int green = ContextCompat.getColor(requireContext(), R.color.green);
+        int opacity_green = ContextCompat.getColor(requireContext(), R.color.opacity_green);
+        int pink = ContextCompat.getColor(requireContext(), R.color.pink);
+        int opacity_pink = ContextCompat.getColor(requireContext(), R.color.opacity_pink);
+        int olive = ContextCompat.getColor(requireContext(), R.color.olive);
+        int opacity_olive = ContextCompat.getColor(requireContext(), R.color.opacity_olive);
+        int violet = ContextCompat.getColor(requireContext(), R.color.violet);
+        int opacity_violet = ContextCompat.getColor(requireContext(), R.color.opacity_violet);
+
+        ImageView closeButton = dialog.findViewById(R.id.closeBtn);
+        EditText enterLetter = dialog.findViewById(R.id.enterLetter);
+        ImageView redButton = dialog.findViewById(R.id.redBtn);
+        ImageView blueButton = dialog.findViewById(R.id.blueBtn);
+        ImageView greenButton = dialog.findViewById(R.id.greenBtn);
+        ImageView pinkButton = dialog.findViewById(R.id.pinkBtn);
+        ImageView oliveButton = dialog.findViewById(R.id.oliveBtn);
+        ImageView violetButton = dialog.findViewById(R.id.violetBtn);
+        ImageView cancelDialogButton = dialog.findViewById(R.id.cancelDialogBtn);
+        ImageView addNewRuleButton = dialog.findViewById(R.id.addNewRuleBtn);
+        addNewRuleButton.setEnabled(false);
+
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+
+        enterLetter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                nameRule = enterLetter.getText().toString();
+                if (nameRule.isEmpty()) {
+                    addNewRuleButton.setEnabled(false);
+                } else {
+                    addNewRuleButton.setEnabled(true);
+                }
+            }
+        });
+
+        redButton.setOnClickListener(v -> {
+            color = red;
+            redButton.setColorFilter(red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        blueButton.setOnClickListener(v -> {
+            color = blue;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        greenButton.setOnClickListener(v -> {
+            color = green;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        pinkButton.setOnClickListener(v -> {
+            color = pink;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        oliveButton.setOnClickListener(v -> {
+            color = olive;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        violetButton.setOnClickListener(v -> {
+            color = violet;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(violet);
+        });
+
+        cancelDialogButton.setOnClickListener(v -> dialog.dismiss());
+
+        addNewRuleButton.setOnClickListener(v -> {
+            describeRule = "If you are confusing the letter " + nameRule + ", color it.";
+            ColorRule rule = new ColorRule(nameRule, describeRule, color);
+            colorRuleController.addRule(rule);
+//            ruleList.add(rule);
+            onResume();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void showChangeColorRuleDialog(int position) {
+        Dialog dialog = new Dialog(requireActivity());
+        dialog.setContentView(R.layout.dialog_add_color_rule_layout);
+        String nameThisRule = ruleList.get(position).getName();
+        int colorThisRule = ruleList.get(position).getColor();
+
+        int red = ContextCompat.getColor(requireContext(), R.color.red);
+        int opacity_red = ContextCompat.getColor(requireContext(), R.color.opacity_red);
+        int blue = ContextCompat.getColor(requireContext(), R.color.blue);
+        int opacity_blue = ContextCompat.getColor(requireContext(), R.color.opacity_blue);
+        int green = ContextCompat.getColor(requireContext(), R.color.green);
+        int opacity_green = ContextCompat.getColor(requireContext(), R.color.opacity_green);
+        int pink = ContextCompat.getColor(requireContext(), R.color.pink);
+        int opacity_pink = ContextCompat.getColor(requireContext(), R.color.opacity_pink);
+        int olive = ContextCompat.getColor(requireContext(), R.color.olive);
+        int opacity_olive = ContextCompat.getColor(requireContext(), R.color.opacity_olive);
+        int violet = ContextCompat.getColor(requireContext(), R.color.violet);
+        int opacity_violet = ContextCompat.getColor(requireContext(), R.color.opacity_violet);
+
+        ImageView closeButton = dialog.findViewById(R.id.closeBtn);
+        EditText enterLetter = dialog.findViewById(R.id.enterLetter);
+        ImageView redButton = dialog.findViewById(R.id.redBtn);
+        ImageView blueButton = dialog.findViewById(R.id.blueBtn);
+        ImageView greenButton = dialog.findViewById(R.id.greenBtn);
+        ImageView pinkButton = dialog.findViewById(R.id.pinkBtn);
+        ImageView oliveButton = dialog.findViewById(R.id.oliveBtn);
+        ImageView violetButton = dialog.findViewById(R.id.violetBtn);
+        ImageView cancelDialogButton = dialog.findViewById(R.id.cancelDialogBtn);
+        ImageView addNewRuleButton = dialog.findViewById(R.id.addNewRuleBtn);
+        addNewRuleButton.setEnabled(false);
+
+        enterLetter.setText(nameThisRule);
+
+        if (colorThisRule == red) redButton.setColorFilter(red);
+        else if (colorThisRule == blue) blueButton.setColorFilter(blue);
+        else if (colorThisRule == green) greenButton.setColorFilter(green);
+        else if (colorThisRule == pink) pinkButton.setColorFilter(pink);
+        else if (colorThisRule == olive) oliveButton.setColorFilter(olive);
+        else if (colorThisRule == violet) violetButton.setColorFilter(violet);
+
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+
+        enterLetter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                nameRule = enterLetter.getText().toString();
+                if (nameRule.isEmpty()) {
+                    addNewRuleButton.setEnabled(false);
+                } else {
+                    addNewRuleButton.setEnabled(true);
+                }
+            }
+        });
+
+        redButton.setOnClickListener(v -> {
+            color = red;
+            redButton.setColorFilter(red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        blueButton.setOnClickListener(v -> {
+            color = blue;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        greenButton.setOnClickListener(v -> {
+            color = green;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        pinkButton.setOnClickListener(v -> {
+            color = pink;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        oliveButton.setOnClickListener(v -> {
+            color = olive;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(olive);
+            violetButton.setColorFilter(opacity_violet);
+        });
+        violetButton.setOnClickListener(v -> {
+            color = violet;
+            redButton.setColorFilter(opacity_red);
+            blueButton.setColorFilter(opacity_blue);
+            greenButton.setColorFilter(opacity_green);
+            pinkButton.setColorFilter(opacity_pink);
+            oliveButton.setColorFilter(opacity_olive);
+            violetButton.setColorFilter(violet);
+        });
+
+        cancelDialogButton.setOnClickListener(v -> dialog.dismiss());
+
+        addNewRuleButton.setOnClickListener(v -> {
+            describeRule = "If you are confusing the letter " + nameRule + ", color it.";
+            ColorRule rule = new ColorRule(nameRule, describeRule, color);
+            colorRuleController.addRule(rule);
+            onResume();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void handleReceivedRule() {
+//        Gson gson = new Gson();
+//        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
+//        Type type = new TypeToken<List<ColorRule>>() {}.getType();
+//        ruleList = gson.fromJson(jsonRetrieved, type);
+//        adapter = new ColorRuleAdapter(getContext(), ruleList);
+        colorRuleController.getAllRules().thenApply(rules -> {
+            if (!rules.isEmpty()) {
+                ruleList.clear();
+                ruleList.addAll(rules);
+                adapter.notifyDataSetChanged();
+            }
+            return null;
+        });
+    }
+
+    private void replaceFragment(Fragment newFragment) {
+        if (containerId != -1) {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(containerId, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+    }
+}

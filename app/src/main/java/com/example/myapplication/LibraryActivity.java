@@ -9,7 +9,11 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.utils.textextractor.ImageTextExtractor;
 import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
@@ -52,6 +56,7 @@ public class LibraryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_library);
         uploadFileIcon = findViewById(R.id.upload_file_icon);
         imageTextExtractor = new ImageTextExtractor(this);

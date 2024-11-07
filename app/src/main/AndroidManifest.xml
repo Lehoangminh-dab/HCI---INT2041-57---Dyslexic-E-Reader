@@ -29,6 +29,22 @@
 <!--            android:theme="@style/Theme.MyApplication">-->
 <!--        </activity>-->
         <activity
+            android:name=".FontDisplayActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FontEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LibraryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -36,6 +52,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ReadingActivity"
+            android:exported="false">
         </activity>
     </application>
 </manifest>
