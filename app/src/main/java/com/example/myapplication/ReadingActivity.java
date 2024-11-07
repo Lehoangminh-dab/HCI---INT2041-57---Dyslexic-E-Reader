@@ -59,19 +59,7 @@ public class ReadingActivity extends AppCompatActivity {
     private int wordSpace;
     private List<ColorRule> colorRuleList;
 
-    private String content = "My school is my favorite place. I have" +
-            " many friends in my school who always help me. My teachers" +
-            " are very friendly and take care of my parents. Our school" +
-            " is very beautiful. It has many classrooms, a playground, a" +
-            " garden, and canteen. Our school is very big and famous. People" +
-            " living in our city send their children to study here. Our" +
-            " school also provides free education to poor children. Every" +
-            " student studying here is supports and plays with us. Our seniors" +
-            " are very friendly as well. Our school also does social services" +
-            " like planting trees every month. I am proud of my school, and" +
-            " love it very much. Engage your kid into diverse thoughts and" +
-            " motivate them to improve their English with our Essay for Class" +
-            " 1 and avail the Simple Essays suitable for them.";
+    private String content;
     SpannableString spannableString;
 
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
@@ -171,6 +159,7 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        content = sharedPreferences.getString("content", "Error Loading Content");
         fontName = sharedPreferences.getString("font", "dyslexic");
         size = sharedPreferences.getInt("size", 42);
         lineSpace = sharedPreferences.getFloat("lineSpace", 1);
@@ -468,8 +457,8 @@ public class ReadingActivity extends AppCompatActivity {
 //        Spannable spannableText = new SpannableString(pageText);
 
         int offset = textView.getOffsetForPosition(touchX, touchY);
-        int start = findWordStart(pageText, offset);
-        int end = findWordEnd(pageText, offset);
+        int start = findWordStart(spannableString.toString(), offset);
+        int end = findWordEnd(spannableString.toString(), offset);
 
         // Áp dụng highlight dark cho từ hiện tại
         applyDarkHighlight(spannableString, start, end);
@@ -496,7 +485,6 @@ public class ReadingActivity extends AppCompatActivity {
 
         // Tô sáng từ được chọn với khung chữ nhật bao quanh
         spannableText.setSpan(new BackgroundColorSpan(Color.parseColor("#FCECCB")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu nền cho từ được chọn
-        spannableText.setSpan(new ForegroundColorSpan(Color.BLACK), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu chữ của từ được chọn
     }
 
     private void scheduleRemoveHighlight() {

@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.utils.textextractor.ImageTextExtractor;
 import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
@@ -48,6 +51,9 @@ public class LibraryActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_UPLOAD_FILE = 1;
     private static final String LOG_TAG = "LibraryActivity";
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
     private TextExtractor textExtractor;
     private ImageTextExtractor imageTextExtractor;
     private ImageView uploadFileIcon;
@@ -58,6 +64,11 @@ public class LibraryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_library);
+        loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
+
+        sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
         uploadFileIcon = findViewById(R.id.upload_file_icon);
         imageTextExtractor = new ImageTextExtractor(this);
         setViewBehaviors();
@@ -72,6 +83,13 @@ public class LibraryActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "Upload file icon clicked");
             openFile();
         });
+    }
+
+    private void loadFragment(int containerId, Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(containerId, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void openFile() {
@@ -136,7 +154,9 @@ public class LibraryActivity extends AppCompatActivity {
             extractTextFromImage(fileUri).thenAccept(
                     extractedText -> {
                         if (extractedText != null) {
-                            createTextFile(fileUri, extractedText);
+                            editor.putString("content", extractedText);
+                            editor.apply();
+//                            createTextFile(fileUri, extractedText);
                         } else {
                             showMessage("Image text content cannot be found.");
                         }
@@ -146,11 +166,17 @@ public class LibraryActivity extends AppCompatActivity {
             // Extract text from document on the main thread.
             String extractedText = extractTextFromDocumentFile(fileUri);
             if (extractedText != null) {
-                createTextFile(fileUri, extractedText);
+                editor.putString("content", extractedText);
+                editor.apply();
+//                createTextFile(fileUri, extractedText);
+
             } else {
                 showMessage("Error extracting text from file");
             }
         }
+
+        Intent intent = new Intent(this, ReadingActivity.class);
+        startActivity(intent);
     }
 
     private Uri getFileUri(Intent data) {
