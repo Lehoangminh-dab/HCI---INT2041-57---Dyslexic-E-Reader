@@ -2,8 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -11,13 +14,14 @@
         app:layout_constraintTop_toTopOf="parent">
         <TextView
             android:id="@+id/library"
-            android:layout_width="113dp"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:fontFamily="@font/wendy_one"
             android:gravity="center_horizontal|top"
             android:lineSpacingExtra="11sp"
+            android:layout_marginTop="40dp"
             android:text="@string/library_title"
             android:textAppearance="@style/library_title"
             android:translationY="-5.52sp"
@@ -62,4 +66,15 @@
         app:layout_constraintTop_toBottomOf="@+id/uploadFileLabelTextView"
         app:layout_constraintHorizontal_bias="0.5"
         />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:clipToOutline="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
