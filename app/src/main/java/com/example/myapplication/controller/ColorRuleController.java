@@ -5,25 +5,21 @@ import android.widget.Toast;
 
 import com.example.myapplication.model.ColorRule;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class ColorRuleController {
+public class ColorRuleController extends FireBaseController {
 
-    private FirebaseDatabase database;
-    private Context context;
     private boolean deleted = false;
 
     public ColorRuleController() {
-        database = FirebaseDatabase.getInstance();
+        super();
     }
 
     public ColorRuleController(Context context) {
-        database = FirebaseDatabase.getInstance();
-        this.context = context;
+        super(context);
     }
 
     public CompletableFuture<List<ColorRule>> getAllRules() {

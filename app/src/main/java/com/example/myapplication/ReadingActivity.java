@@ -93,14 +93,6 @@ public class ReadingActivity extends AppCompatActivity {
 
         readingProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
 
-        findViewById(R.id.import_contacts).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ReadingActivity.this, HighlightActivity.class);
-                startActivity(intent);
-            }
-        });
-
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -364,6 +356,16 @@ public class ReadingActivity extends AppCompatActivity {
         // Áp dụng dim cho tất cả các từ khác, giữ nguyên hiệu ứng màu gốc cho từ được chọn
         applyDimEffectExcept(spannableString, start, end);
         textView.setText(spannableString);
+
+//        String pageText = pages[currentPage];
+//        Spannable spannableText = new SpannableString(pageText);
+//
+//        int offset = textView.getOffsetForPosition(touchX, touchY);
+//        int start = findWordStart(pageText, offset);
+//        int end = findWordEnd(pageText, offset);
+//
+//        applyDimEffectExcept(spannableText, start, end);
+//        textView.setText(spannableText);
     }
 
     private void clearDimEffect(Spannable spannableText) {
@@ -379,6 +381,8 @@ public class ReadingActivity extends AppCompatActivity {
 
     private void highlightLineAtTouch(MotionEvent event) {
         int touchY = (int) event.getY();
+        String pageText = pages[currentPage];
+        Spannable spannableText = new SpannableString(pageText);
 
         // Xóa hiệu ứng dim cũ
         clearDimEffect(spannableString);
@@ -393,10 +397,11 @@ public class ReadingActivity extends AppCompatActivity {
             // Áp dụng highlight cho dòng hiện tại
             applyDimEffectExcept(spannableString, lineStart, lineEnd);
             textView.setText(spannableString);
+
+//            applyDimEffectExcept(spannableText, lineStart, lineEnd);
+//            textView.setText(spannableText);
         }
     }
-
-
 
     private int findWordStart(String text, int offset) {
         while (offset > 0 && !Character.isWhitespace(text.charAt(offset - 1))) {
@@ -412,7 +417,6 @@ public class ReadingActivity extends AppCompatActivity {
         return offset;
     }
 
-
     private void applyDimEffectExcept(Spannable spannableText, int start, int end) {
         String text = spannableText.toString();
         int wordStart = 0;
@@ -423,7 +427,7 @@ public class ReadingActivity extends AppCompatActivity {
                 int wordEnd = (i == text.length() - 1) ? i + 1 : i;
                 if (wordStart < start || wordEnd > end) {
                     spannableText.setSpan(
-                            new ForegroundColorSpan(Color.GRAY), wordStart, wordEnd,
+                            new BackgroundColorSpan(Color.GRAY), wordStart, wordEnd,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     );
                 }
@@ -460,10 +464,12 @@ public class ReadingActivity extends AppCompatActivity {
 
         // Xóa hiệu ứng highlight dark cũ
         clearDarkHighlight(spannableString);
+        String pageText = pages[currentPage];
+//        Spannable spannableText = new SpannableString(pageText);
 
         int offset = textView.getOffsetForPosition(touchX, touchY);
-        int start = findWordStart(spannableString.toString(), offset);
-        int end = findWordEnd(spannableString.toString(), offset);
+        int start = findWordStart(pageText, offset);
+        int end = findWordEnd(pageText, offset);
 
         // Áp dụng highlight dark cho từ hiện tại
         applyDarkHighlight(spannableString, start, end);
@@ -477,14 +483,20 @@ public class ReadingActivity extends AppCompatActivity {
                 spannableText.removeSpan(span);
             }
         }
+
+
+
+
+        // Áp dụng hiệu ứng dark highlight cho từ được chọn
+//        applyDarkHighlight(spannableText, start, end);
+//        textView.setText(spannableText);
     }
-
-
 
     private void applyDarkHighlight(Spannable spannableText, int start, int end) {
 
         // Tô sáng từ được chọn với khung chữ nhật bao quanh
         spannableText.setSpan(new BackgroundColorSpan(Color.parseColor("#FCECCB")), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu nền cho từ được chọn
+        spannableText.setSpan(new ForegroundColorSpan(Color.BLACK), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu chữ của từ được chọn
     }
 
     private void scheduleRemoveHighlight() {
@@ -499,7 +511,6 @@ public class ReadingActivity extends AppCompatActivity {
         };
         handler.postDelayed(removeHighlightRunnable, 2000);
     }
-
 
     private void applyHighlightMode(String mode) {
         ConstraintLayout readingLayout = findViewById(R.id.reading_layout);
