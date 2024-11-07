@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Layout;
+import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -389,6 +390,10 @@ public class ReadingActivity extends AppCompatActivity {
         String text = spannableText.toString();
         int wordStart = 0;
 
+        // Capture existing spans in the highlighted region
+        Object[] originalSpans = spannableText.getSpans(start, end, Object.class);
+
+        // Apply dim effect to all words except the highlighted word
         for (int i = 0; i < text.length(); i++) {
             if (Character.isWhitespace(text.charAt(i)) || i == text.length() - 1) {
                 int wordEnd = (i == text.length() - 1) ? i + 1 : i;
@@ -400,6 +405,17 @@ public class ReadingActivity extends AppCompatActivity {
                 }
                 wordStart = i + 1;
             }
+        }
+
+        // Remove any dim effect on the highlighted word (start to end) by clearing any applied spans
+        spannableText.removeSpan(new ForegroundColorSpan(Color.GRAY));
+
+        // Reapply original spans to restore initial appearance
+        for (Object span : originalSpans) {
+            int spanStart = spannableText.getSpanStart(span);
+            int spanEnd = spannableText.getSpanEnd(span);
+            int spanFlags = spannableText.getSpanFlags(span);
+            spannableText.setSpan(span, spanStart, spanEnd, spanFlags);
         }
     }
 
@@ -454,11 +470,11 @@ public class ReadingActivity extends AppCompatActivity {
             public void run() {
                 if (currentPage < pages.length) {
                     textView.setText(pages[currentPage]);
+                    updatePage();
                 }
             }
         };
-        handler.postDelayed(removeHighlightRunnable, 2500);
-        updatePage();
+        handler.postDelayed(removeHighlightRunnable, 2000);
     }
 
     private void applyHighlightMode(String mode) {
