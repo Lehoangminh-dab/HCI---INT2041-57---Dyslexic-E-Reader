@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,9 @@ import com.example.myapplication.adapter.ColorRuleAdapter;
 import com.example.myapplication.controller.ColorRuleController;
 import com.example.myapplication.model.ColorRule;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,6 +75,12 @@ public class FragmentColor extends Fragment {
         ruleList = new ArrayList<>();
         adapter = new ColorRuleAdapter(requireActivity(), ruleList);
         colorRuleListView.setAdapter(adapter);
+        if (ruleList.isEmpty()) {
+            Log.e("1", "1");
+        } else {
+            Log.e("0", "0");
+        }
+
         addRuleButton = view.findViewById(R.id.addRuleBtn);
 
         backButton.setOnClickListener(v -> {
@@ -221,6 +230,7 @@ public class FragmentColor extends Fragment {
             describeRule = "If you are confusing the letter " + nameRule + ", color it.";
             ColorRule rule = new ColorRule(nameRule, describeRule, color);
             colorRuleController.addRule(rule);
+//            ruleList.add(rule);
             onResume();
             dialog.dismiss();
         });
@@ -357,6 +367,11 @@ public class FragmentColor extends Fragment {
     }
 
     private void handleReceivedRule() {
+//        Gson gson = new Gson();
+//        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
+//        Type type = new TypeToken<List<ColorRule>>() {}.getType();
+//        ruleList = gson.fromJson(jsonRetrieved, type);
+//        adapter = new ColorRuleAdapter(getContext(), ruleList);
         colorRuleController.getAllRules().thenApply(rules -> {
             if (!rules.isEmpty()) {
                 ruleList.clear();

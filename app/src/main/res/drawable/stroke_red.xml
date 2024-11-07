@@ -3,7 +3,7 @@
     android:shape="rectangle">
     <solid android:color="@color/white"/>
 <!--    Đang bị lỗi dialog không bo góc được-->
-    <corners android:radius="50dp"/>
+    <corners android:radius="10dp"/>
     <stroke
         android:color="@color/red"
         android:width="2dp"/>

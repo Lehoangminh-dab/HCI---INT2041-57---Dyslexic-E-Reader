@@ -1,7 +1,8 @@
 package com.example.myapplication;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -10,19 +11,28 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
-public class HighlightActivity extends AppCompatActivity {
+public class FragmentHighlight extends Fragment {
 
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private int containerId;
     private Switch highlightSwitch;
     private ImageView highlightWordBtn, highlightRulerBtn, highlightDarkBtn, backBtn;
     private TextView textWord, textRuler, textHole;
     private TextView sampleText;
+    View darkOverlay;
     private boolean isHighlightEnabled = true; // Start with highlight enabled
 
     enum HighlightMode {
@@ -32,35 +42,43 @@ public class HighlightActivity extends AppCompatActivity {
 
     @SuppressLint("MissingInflatedId")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_highlight);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_highlight, container, false);
 
-        highlightSwitch = findViewById(R.id.switch1);
-        highlightWordBtn = findViewById(R.id.highlight_word_btn);
-        highlightRulerBtn = findViewById(R.id.highlight_ruler_btn);
-        highlightDarkBtn = findViewById(R.id.highlight_dark_btn);
-        backBtn = findViewById(R.id.arrow_back_btn);
-        textWord = findViewById(R.id.textViewWord);
-        textRuler = findViewById(R.id.textViewRuler);
-        textHole = findViewById(R.id.textViewDark);
-        sampleText = findViewById(R.id.textView8);
+        sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            containerId = args.getInt("containerId", -1);
+        }
+
+        highlightSwitch = view.findViewById(R.id.switch1);
+        highlightWordBtn = view.findViewById(R.id.highlight_word_btn);
+        highlightRulerBtn = view.findViewById(R.id.highlight_ruler_btn);
+        highlightDarkBtn = view.findViewById(R.id.highlight_dark_btn);
+        backBtn = view.findViewById(R.id.arrow_back_btn);
+        textWord = view.findViewById(R.id.textViewWord);
+        textRuler = view.findViewById(R.id.textViewRuler);
+        textHole = view.findViewById(R.id.textViewDark);
+        sampleText = view.findViewById(R.id.textView8);
+        darkOverlay = view.findViewById(R.id.dark_overlay);
 
         backBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(HighlightActivity.this, ReadingActivity.class);
-            startActivity(intent);
-            finish(); // Kết thúc HighlightActivity
+            FragmentSettingsMenu fragmentSettingsMenu = new FragmentSettingsMenu();
+            fragmentSettingsMenu.setArguments(args);
+            replaceFragment(fragmentSettingsMenu);
         });
 
-        // Set the switch to be on and colored red
         highlightSwitch.setChecked(true);
         highlightSwitch.getThumbDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         setupHighlightSwitch();
         setupHighlightButtons();
 
-        // Apply initial highlight mode to "highlight_word"
         applyHighlightMode(HighlightMode.WORD);
+
+        return view;
     }
 
     private void setupHighlightSwitch() {
@@ -100,8 +118,6 @@ public class HighlightActivity extends AppCompatActivity {
     private void applyHighlightMode(HighlightMode mode) {
         resetHighlight();
         saveHighlightMode(mode); // Lưu chế độ highlight đã chọn
-
-        View darkOverlay = findViewById(R.id.dark_overlay); // View lớp phủ tối
 
         // Reset màu chữ về màu đen
         textWord.setTextColor(Color.BLACK);
@@ -180,10 +196,17 @@ public class HighlightActivity extends AppCompatActivity {
     }
 
     private void saveHighlightMode(HighlightMode mode) {
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("highlight_mode", mode.name()); // Lưu tên của chế độ highlight
         editor.apply();
+    }
+
+    private void replaceFragment(Fragment newFragment) {
+        if (containerId != -1) {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(containerId, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
 }

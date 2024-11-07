@@ -44,8 +44,11 @@ public class FragmentSettingsMenu extends Fragment {
             fragmentAccount.setArguments(args);
             replaceFragment(fragmentAccount);
         });
-//        Waiting for Dung to create FragmentHighlight
-//        highlightButton.setOnClickListener(v -> replaceFragment(new FragmentHighlight()));
+        highlightButton.setOnClickListener(v -> {
+            FragmentHighlight fragmentHighlight = new FragmentHighlight();
+            fragmentHighlight.setArguments(args);
+            replaceFragment(fragmentHighlight);
+        });
         fontButton.setOnClickListener(v -> {
             FragmentFont fragmentFont = new FragmentFont();
             fragmentFont.setArguments(args);

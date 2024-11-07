@@ -92,14 +92,6 @@ public class ReadingActivity extends AppCompatActivity {
 
         readingProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
 
-        findViewById(R.id.import_contacts).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ReadingActivity.this, HighlightActivity.class);
-                startActivity(intent);
-            }
-        });
-
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -402,7 +394,7 @@ public class ReadingActivity extends AppCompatActivity {
                 int wordEnd = (i == text.length() - 1) ? i + 1 : i;
                 if (wordStart < start || wordEnd > end) {
                     spannableText.setSpan(
-                            new ForegroundColorSpan(Color.GRAY), wordStart, wordEnd,
+                            new BackgroundColorSpan(Color.GRAY), wordStart, wordEnd,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     );
                 }
@@ -466,6 +458,7 @@ public class ReadingActivity extends AppCompatActivity {
             }
         };
         handler.postDelayed(removeHighlightRunnable, 2500);
+        updatePage();
     }
 
     private void applyHighlightMode(String mode) {
