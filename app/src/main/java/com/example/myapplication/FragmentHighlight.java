@@ -32,6 +32,7 @@ public class FragmentHighlight extends Fragment {
     private ImageView highlightWordBtn, highlightRulerBtn, highlightDarkBtn, backBtn;
     private TextView textWord, textRuler, textHole;
     private TextView sampleText;
+    private Boolean onHighLight;
     View darkOverlay;
     private boolean isHighlightEnabled = true; // Start with highlight enabled
 
@@ -70,7 +71,7 @@ public class FragmentHighlight extends Fragment {
             replaceFragment(fragmentSettingsMenu);
         });
 
-        highlightSwitch.setChecked(true);
+        highlightSwitch.setChecked(onHighLight);
         highlightSwitch.getThumbDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         setupHighlightSwitch();
@@ -79,6 +80,12 @@ public class FragmentHighlight extends Fragment {
         applyHighlightMode(HighlightMode.WORD);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onHighLight = sharedPreferences.getBoolean("onHightLight", true);
     }
 
     private void setupHighlightSwitch() {

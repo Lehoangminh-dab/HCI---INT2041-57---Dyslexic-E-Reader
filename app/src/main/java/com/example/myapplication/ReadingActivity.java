@@ -399,7 +399,7 @@ public class ReadingActivity extends AppCompatActivity {
                 int wordEnd = (i == text.length() - 1) ? i + 1 : i;
                 if (wordStart < start || wordEnd > end) {
                     spannableText.setSpan(
-                            new BackgroundColorSpan(Color.GRAY), wordStart, wordEnd,
+                            new ForegroundColorSpan(Color.GRAY), wordStart, wordEnd,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     );
                 }
