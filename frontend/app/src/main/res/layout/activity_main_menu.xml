@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:clipToOutline="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -226,6 +237,7 @@
                     android:id="@+id/bookPoster6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:contentDescription="poster6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -298,9 +310,9 @@
     <ScrollView
         android:id="@+id/currentlyList"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="300dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentlyReadingTitle">
+        app:layout_constraintTop_toBottomOf="@id/currentlyReadingTitle">
 
         <LinearLayout
             android:id="@+id/currentlyScroll"
@@ -484,62 +496,5 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/toolBar"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/top_stroke"
-        android:orientation="horizontal"
-        android:paddingTop="0.5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <FrameLayout
-            android:id="@+id/homeBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/homeIcon"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_book" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/libraryBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/libraryIcon"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_library" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/settingsBtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/settingsIcon"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_account_circle" />
-
-        </FrameLayout>
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
