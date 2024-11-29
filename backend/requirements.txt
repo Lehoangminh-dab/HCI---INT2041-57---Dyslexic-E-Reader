@@ -1,3 +1,4 @@
 flask-restful
 langchain-ollama
 bs4
+gunicorn
