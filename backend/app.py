@@ -24,5 +24,17 @@ def description():
     else:
         return jsonify({"error": "Missing 'word' parameter"}), 400
 
+@app.route('/api/pronunciation', methods=['GET'])
+def pronunciation():
+    word = request.args.get('word')
+    if word:
+        audio_filename = services.generate_pronunciation(word)
+        try:
+            return send_file(audio_filename, mimetype='audio/mp3')
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Missing 'word' parameter"}), 400
+
 if (__name__ == '__main__'):
     app.run(debug=True)
