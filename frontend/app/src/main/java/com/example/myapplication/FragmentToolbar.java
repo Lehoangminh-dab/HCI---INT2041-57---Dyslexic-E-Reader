@@ -38,7 +38,7 @@ public class FragmentToolbar extends Fragment {
         settingsIcon = view.findViewById(R.id.settingsIcon);
 
 
-        if (getActivity() instanceof HomeActivity) {
+        if (getActivity() instanceof MainMenuActivity) {
             homeIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             homeButton.setEnabled(false);
         } else if (getActivity() instanceof LibraryActivity) {
@@ -50,7 +50,7 @@ public class FragmentToolbar extends Fragment {
         }
 
         homeButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), HomeActivity.class);
+            Intent intent = new Intent(getActivity(), MainMenuActivity.class);
             startActivity(intent);
         });
 
