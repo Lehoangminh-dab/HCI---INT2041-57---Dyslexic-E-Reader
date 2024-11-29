@@ -38,10 +38,8 @@ class ImageGenerator:
     A class used to generate images based on a description using an external API.
     Attributes
     ----------
-    api_url : str
-        The URL of the image generation API.
-    image_id : int
-        A counter to keep track of the generated image filenames.
+    api_url (str): The URL of the image generation API.
+    image_id (int): A counter to keep track of the generated image filenames.
     Methods
     -------
     generate(description)
@@ -77,7 +75,7 @@ class PronunciationAudioGenerator:
     A class to generate pronunciation audio files using a text-to-speech API.
     Attributes:
         api_url (str): The URL of the text-to-speech API.
-        audio_id (int): The ID of the audio file to be generated.
+        audio_id (int): A counter to keep track of the generated audio filenames.
     Methods:
         generate(word):
             Generates an audio file for the given word using the text-to-speech API.
