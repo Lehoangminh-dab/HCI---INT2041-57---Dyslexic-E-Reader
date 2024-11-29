@@ -13,6 +13,9 @@ ENV PYTHONUNBUFFERED=1
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
+# Install necessary bash tools
+RUN apt-get update && apt-get install -y curl
+
 # Install and activate ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
 RUN ollama pull llama3.2:1b
