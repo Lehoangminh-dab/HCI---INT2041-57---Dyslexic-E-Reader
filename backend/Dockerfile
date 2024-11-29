@@ -18,8 +18,9 @@ RUN apt-get update && apt-get install -y curl
 
 # Install and activate ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
-RUN ollama pull llama3.2:1b
 RUN ollama serve
+RUN ollama pull llama3.2:1b
+
 
 # Copy local code to the container image
 WORKDIR /app
