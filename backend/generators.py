@@ -1,9 +1,8 @@
-from langchain_ollama import OllamaLLM
 import requests
 import os
 import glob
+from groq import Groq
 
-LANGUAGE_MODEL = "llama3.2:1b"
 IMAGE_MODEL_URL = "https://image.pollinations.ai/prompt/"
 TTS_MODEL_URL = "https://translate.google.com/translate_tts?ie=UTF-8&tl=tr-TR&client=tw-ob"
 
@@ -19,19 +18,36 @@ class ImageDescriptionGenerator:
     """
     
     def __init__(self):
-        self.llm = OllamaLLM(model=LANGUAGE_MODEL)
-
+        self.llm_client = Groq()
+        
     def generate(self, word):
-        response = self.llm.invoke(
-            f"create a highly detailed text prompt for a text-to-image AI model " + 
-            f"to illustrate the most common meaning of the word {word}, in 2D. " +
-            "Focus on being descriptive, specific, and accurate. " +
-            "Avoid using abstract terms. "
-            "Then optimize the prompt. " +  
-            "Output ONLY the final optimized prompt with no additional explanation or introductory text."
+        completion = self.llm_client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {
+                    "role": "user",
+                    "content":  f"create a highly detailed text prompt for a text-to-image AI model " + 
+                                f"to illustrate the most common meaning of the word {word}, in 2D. " +
+                                "Focus on being descriptive, specific, and accurate. " +
+                                "Avoid using abstract terms. "
+                                "Then optimize the prompt. " +  
+                                "Output ONLY the final optimized prompt with no additional explanation or introductory text."
+                }
+            ],
+            temperature=1,
+            max_tokens=1024,
+            top_p=1,
+            stream=True,
+            stop=None,
         )
+        
+        response = ""
+        for chunk in completion:
+            response += chunk.choices[0].delta.content or ""
+            
+        return response
 
-        return response   
+
 
 class ImageGenerator:
     """
@@ -111,4 +127,5 @@ class PronunciationAudioGenerator:
             os.remove(file)
         
     
+
 
