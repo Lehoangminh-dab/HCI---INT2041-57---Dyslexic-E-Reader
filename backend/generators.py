@@ -4,7 +4,7 @@ import glob
 from groq import Groq
 
 IMAGE_MODEL_URL = "https://image.pollinations.ai/prompt/"
-TTS_MODEL_URL = "https://translate.google.com/translate_tts?ie=UTF-8&tl=tr-TR&client=tw-ob"
+TTS_MODEL_URL = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob"
 
 class ImageDescriptionGenerator:
     """
