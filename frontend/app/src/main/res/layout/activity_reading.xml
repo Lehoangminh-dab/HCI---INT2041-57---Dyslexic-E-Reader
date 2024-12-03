@@ -79,7 +79,7 @@
             android:layout_marginTop="90dp"
             android:gravity="top"
             android:lineSpacingExtra="25sp"
-            android:text=" "
+            android:text="text"
             android:textSize="50sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,6 +126,10 @@
                 android:layout_marginStart="30dp"
                 app:srcCompat="@drawable/ic_arrow_right" />
         </LinearLayout>
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
