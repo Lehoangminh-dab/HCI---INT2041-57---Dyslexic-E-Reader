@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 public class TextExtractor {
-    private static final String LOG_TAG = "TextExtractorUtil";
+    private static final String LOG_TAG = "TextExtractor";
     private final TextExtractionStrategy textExtractionStrategy;
 
     public TextExtractor(TextExtractionStrategy textExtractionStrategy) {
