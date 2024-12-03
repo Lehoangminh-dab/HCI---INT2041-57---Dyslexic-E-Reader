@@ -46,6 +46,7 @@ public class FragmentWordInfo extends Fragment {
     private ImageButton understoodButton;
     private static final String ARG_WORD = "word";
     private ImageView wordImage;
+    private TextView loadingText;
     private TextView wordTextView;
     private String word;
     private SharedPreferences sharedPreferences;
@@ -74,12 +75,13 @@ public class FragmentWordInfo extends Fragment {
         View view = inflater.inflate(R.layout.fragment_word_info, container, false);
 
         // Display image
+        loadingText = view.findViewById(R.id.loading_text);
         wordImage = view.findViewById(R.id.word_image);
         displayImage(word);
 
         // Display word
         wordTextView = view.findViewById(R.id.word);
-        displayWordText(word);
+        displayWordTextView(word);
 
         // Initialize buttons
         closeButton = view.findViewById(R.id.close_button);
@@ -175,6 +177,10 @@ public class FragmentWordInfo extends Fragment {
         });
     }
     private void displayImage(String word) {
+        // Show loading text, hide image
+        loadingText.setVisibility(View.VISIBLE);
+        wordImage.setVisibility(View.GONE);
+
         String requestUrl = "http://192.168.1.42:5000/api/image?word=" + word;
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -206,6 +212,9 @@ public class FragmentWordInfo extends Fragment {
                         public void run() {
                             Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
                             wordImage.setImageBitmap(bitmap);
+                            // Hide loading text, show image
+                            loadingText.setVisibility(View.GONE);
+                            wordImage.setVisibility(View.VISIBLE);
                             Log.d(LOG_TAG, "Image displayed successfully");
                         }
                     });
@@ -213,7 +222,8 @@ public class FragmentWordInfo extends Fragment {
             }
         });
     }
-    private void displayWordText(String word) {
+
+    private void displayWordTextView(String word) {
         // Init shared preferences
         sharedPreferences = getContext().getSharedPreferences("MySharedPref",
                 getContext().MODE_PRIVATE);
