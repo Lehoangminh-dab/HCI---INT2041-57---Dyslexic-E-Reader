@@ -78,7 +78,7 @@
                     android:contentDescription="poster1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle1"
@@ -104,7 +104,7 @@
                     android:contentDescription="poster2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle2"
@@ -129,7 +129,7 @@
                     android:contentDescription="poster3"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle3"
@@ -154,7 +154,7 @@
                     android:contentDescription="poster4"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle4"
@@ -215,7 +215,7 @@
                     android:contentDescription="poster5r"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -241,7 +241,7 @@
                     android:contentDescription="poster6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -266,7 +266,7 @@
                     android:contentDescription="poster7"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -291,7 +291,7 @@
                     android:contentDescription="poster8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
@@ -331,7 +331,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle9"
@@ -380,7 +380,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle10"
@@ -422,7 +422,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle11"
@@ -464,7 +464,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle12"
