@@ -8,6 +8,7 @@ import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,12 +37,15 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private List<ColorRule> ruleList;
     private ColorRuleController colorRuleController;
+    private FrameLayout signInBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        signInBtn = findViewById(R.id.signInBtn);
 
         colorRuleController = new ColorRuleController(this);
 
@@ -88,6 +92,14 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        /*signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
+                startActivity(intent);
+            }
+        });*/
     }
 
     private void handleReceivedRule() {
