@@ -67,7 +67,7 @@
                     android:contentDescription="poster1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle1"
@@ -93,7 +93,7 @@
                     android:contentDescription="poster2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle2"
@@ -118,7 +118,7 @@
                     android:contentDescription="poster3"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle3"
@@ -143,7 +143,7 @@
                     android:contentDescription="poster4"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
 
                 <TextView
                     android:id="@+id/bookTitle4"
@@ -204,7 +204,7 @@
                     android:contentDescription="poster5r"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -230,7 +230,7 @@
                     android:contentDescription="poster6"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -255,7 +255,7 @@
                     android:contentDescription="poster7"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -280,7 +280,7 @@
                     android:contentDescription="poster8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/upload_file_icon" />
+                    app:srcCompat="@drawable/ic_upload_file" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
@@ -308,9 +308,141 @@
         <ScrollView
             android:id="@+id/currentlyList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/book9"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/bookPoster9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_upload_file" />
+
+                <TextView
+                    android:id="@+id/bookTitle9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:text="book9"
+                    app:layout_constraintStart_toEndOf="@id/bookPoster9"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar9"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="160dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="25dp"
+                    android:indeterminateBehavior="repeat"
+                    android:indeterminateDuration="@integer/material_motion_duration_long_1"
+                    android:max="100"
+                    android:maxWidth="60dip"
+                    android:maxHeight="16dip"
+                    android:progress="50"
+                    app:layout_constraintBottom_toTopOf="@id/totalWord9"
+                    app:layout_constraintStart_toEndOf="@id/bookPoster9" />
+
+                <TextView
+                    android:id="@+id/totalWord9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="1000 words"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/bookPoster9" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/book10"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/bookPoster10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_upload_file" />
+
+                <TextView
+                    android:id="@+id/bookTitle10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:text="book10"
+                    app:layout_constraintStart_toEndOf="@+id/bookPoster10"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/totalWord10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="100 words"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/bookPoster10" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar10"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="160dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="25dp"
+                    app:layout_constraintBottom_toTopOf="@+id/totalWord10"
+                    app:layout_constraintStart_toEndOf="@+id/bookPoster10" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/book11"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/bookPoster11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_upload_file" />
+
+                <TextView
+                    android:id="@+id/bookTitle11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:text="book11"
+                    app:layout_constraintStart_toEndOf="@+id/bookPoster11"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/totalWord11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="100 words"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/bookPoster11" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar11"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="160dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="25dp"
+                    app:layout_constraintBottom_toTopOf="@+id/totalWord11"
+                    app:layout_constraintStart_toEndOf="@+id/bookPoster11" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/currentlyScroll"

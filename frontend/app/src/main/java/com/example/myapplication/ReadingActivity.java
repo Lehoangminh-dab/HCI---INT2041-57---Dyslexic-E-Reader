@@ -14,6 +14,8 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.text.Spannable;
@@ -31,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.model.ColorRule;
 import com.example.myapplication.utils.TextColorUtils;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReadingActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "ReadingActivity";
 
     private TextView textView;
     private ImageView arrowLeftBtn, arrowRightBtn, import_contacts_ic;
@@ -60,7 +64,8 @@ public class ReadingActivity extends AppCompatActivity {
     private List<ColorRule> colorRuleList;
 
     private String content;
-    SpannableString spannableString;
+    private SpannableString spannableString;
+    private GestureDetector doubleTapGestureDetector;
 
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
@@ -154,6 +159,15 @@ public class ReadingActivity extends AppCompatActivity {
 
         // Áp dụng chế độ highlight đã lưu
         applyHighlightMode(highlightMode);
+
+        // Xu ly tra tu
+        doubleTapGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                handleDoubleClick(e);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -296,6 +310,12 @@ public class ReadingActivity extends AppCompatActivity {
         textView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                // Nếu là double click, tra thông tin về từ đấy.
+                if (doubleTapGestureDetector.onTouchEvent(event)) {
+                    return true;
+                }
+
+                // Nếu chỉ là single click, highlight từ đấy.
                 if (event.getPointerCount() == 1) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
                         highlightWordAtTouch(event);
@@ -529,5 +549,24 @@ public class ReadingActivity extends AppCompatActivity {
             arrowRightBtn.clearColorFilter();
             import_contacts_ic.clearColorFilter();
         }
+    }
+
+    private void handleDoubleClick(MotionEvent e) {
+        // Get the double clicked word.
+        int x = (int) e.getX();
+        int y = (int) e.getY();
+        int offset = textView.getOffsetForPosition(x, y);
+        String text = spannableString.toString();
+        int start = findWordStart(text, offset);
+        int end = findWordEnd(text, offset);
+        String word = text.substring(start, end);
+        Log.d(LOG_TAG, "Double clicked word: " + word);
+
+        // Start the fragment with the word passed in.
+        FragmentWordInfo fragment = FragmentWordInfo.newInstance(word);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

@@ -1,0 +1,95 @@
+<!-- Auto layout, variables, and unit scale are not yet supported -->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frame_word_info"
+    android:layout_width="320dp"
+    android:layout_height="500dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:clipToOutline="true"
+    android:background="@drawable/frame_word_info"
+    android:layout_gravity="center">
+
+    <ImageView
+        android:id="@+id/word_image"
+        android:layout_width="300dp"
+        android:layout_height="187.5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/frame_word_info"
+        android:contentDescription="Word Image Container"
+        />
+
+    <TextView
+        android:id="@+id/loading_text"
+        android:layout_width="wrap_content"
+        android:layout_height="187.5dp"
+        android:text="Loading..."
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/frame_word_info"
+        android:visibility="gone"
+        android:gravity="center"/>
+
+
+    <!-- Close button -->
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_close_dark"
+        android:background="@android:color/transparent"
+        android:contentDescription="Close"
+        android:clipToOutline="true"/>
+
+    <!-- Volume Up button -->
+    <ImageButton
+        android:id="@+id/pronounce_button"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="260dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_volume"
+        android:contentDescription="Volume Up"
+        android:clipToOutline="true"/>
+
+    <!-- Word -->
+    <TextView
+        android:id="@+id/word"
+        android:layout_width="match_parent"
+        android:layout_height="70sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="320dp"
+        android:text="Skills"
+        android:textSize="50sp"
+        android:textColor="#000000"
+        android:lineHeight="65sp"
+        android:fontFamily="Mali"
+        android:gravity="center"
+        android:background="@drawable/frame_word_info"
+        />
+
+    <!-- New button using the vector drawable -->
+    <ImageButton
+        android:id="@+id/understood_button"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_understood_button"
+        android:scaleType="fitCenter"
+        android:contentDescription="Understood Button"/>
+</RelativeLayout>
