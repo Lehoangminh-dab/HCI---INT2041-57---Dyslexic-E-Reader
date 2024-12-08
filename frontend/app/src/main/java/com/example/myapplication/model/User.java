@@ -1,7 +1,10 @@
 package com.example.myapplication.model;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class User implements Serializable {
     private String id;
@@ -14,6 +17,28 @@ public class User implements Serializable {
     private List<Book> books;
 
     public User() {
+    }
+
+    public User(String id, String email, String password, String name, List<ColorRule> ruleList) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.ruleList = ruleList;
+        font = null;
+        highLight = null;
+        books = null;
+    }
+
+    public User(User user) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.name = user.getName();
+        this.ruleList = user.getRuleList();
+        this.font = user.getFont();
+        this.highLight = user.getHighLight();
+        this.books = user.getBooks();
     }
 
     public String getId() {
@@ -30,17 +55,6 @@ public class User implements Serializable {
 
     public void setHighLight(String highLight) {
         this.highLight = highLight;
-    }
-
-    public User(String id, String email, String password, String name, List<ColorRule> ruleList) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.ruleList = ruleList;
-        font = null;
-        highLight = null;
-        books = null;
     }
 
     public String getEmail() {
@@ -89,5 +103,13 @@ public class User implements Serializable {
 
     public void setBooks(List<Book> books) {
         this.books = books;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(ruleList, user.ruleList) && Objects.equals(font, user.font) && Objects.equals(highLight, user.highLight) && Objects.equals(books, user.books);
     }
 }

@@ -5,37 +5,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.UnderlineSpan;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.adapter.ColorRuleAdapter;
-import com.example.myapplication.controller.ColorRuleController;
 import com.example.myapplication.controller.UserController;
-import com.example.myapplication.model.ColorRule;
 import com.example.myapplication.model.User;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private String email;
-    private String password;
+    private String email = "";
+    private String password = "";
 
     private EditText emailInput;
     private EditText passwordInput;
@@ -55,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView startButton;
     private FrameLayout createAccButton;
     private ProgressDialog progressDialog;
-//    private List<ColorRule> ruleList;
-//    private ColorRuleController colorRuleController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         controller = new UserController(this);
-
-//        colorRuleController = new ColorRuleController(this);
 
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -79,17 +58,9 @@ public class MainActivity extends AppCompatActivity {
         startButton = findViewById(R.id.startBtn);
         createAccButton = findViewById(R.id.createAccBtn);
 
-//        ruleList = new ArrayList<>();
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
-
-        signInButton.setOnClickListener(v -> login());
-        createAccButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
-        });
 
         emailInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -121,21 +92,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        forgotPassButton.setOnTouchListener((v, event) -> {
-//            switch (event.getAction()) {
-//                case MotionEvent.ACTION_DOWN:
-//                    SpannableString content = new SpannableString(forgotPassButton.getText());
-//                    content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-//                    forgotPassButton.setText(content);
-//                    return true;
-//
-//                case MotionEvent.ACTION_UP:
-//                    content = new SpannableString(forgotPassButton.getText().toString());
-//                    forgotPassButton.setText(content);
-//                    return true;
-//            }
-//            return false;
-//        });
+        signInButton.setOnClickListener(v -> login());
+
+        createAccButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void login() {
@@ -171,23 +133,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-//    private void handleReceivedRule() {
-//        colorRuleController.getAllRules().thenApply(rules -> {
-//            if (!rules.isEmpty()) {
-//                ruleList.addAll(rules);
-//                Gson gson = new Gson();
-//                String json = gson.toJson(ruleList);
-//                editor.putString("colorRules", json);
-//                editor.apply();
-//            }
-//
-//            progressDialog.dismiss();
-//
-//            Intent intent = new Intent(this, HomeActivity.class);
-//            startActivity(intent);
-//
-//            return null;
-//        });
-//    }
 }

@@ -20,8 +20,10 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.ColorRule;
 
+import com.example.myapplication.model.User;
 import com.example.myapplication.utils.TextColorUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,12 +35,18 @@ public class FragmentFont extends Fragment {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    private UserController controller;
+
     private int containerId;
     private String fontName;
     private int size;
     private float lineSpace;
     private int wordSpace;
-    private List<ColorRule> colorRuleList;
+    private List<ColorRule> ruleList;
+
+    private User user;
+    private User initialUser;
 
     private ImageView backButton;
     private LinearLayout maliFontButton;
@@ -181,9 +189,12 @@ public class FragmentFont extends Fragment {
         lineSpace = sharedPreferences.getFloat("lineSpace", 1);
         wordSpace= sharedPreferences.getInt("wordSpace", 1);
         Gson gson = new Gson();
-        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
-        Type type = new TypeToken<List<ColorRule>>() {}.getType();
-        colorRuleList = gson.fromJson(jsonRetrieved, type);
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+        initialUser = new User(user);
+
+        ruleList = user.getRuleList();
 
         if (fontName.contains("mali")) {
             maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
@@ -220,7 +231,7 @@ public class FragmentFont extends Fragment {
         } else {
             updatedText = originalText.replaceAll("\\s+", "      ");
         }
-        sampleTextView.setText(TextColorUtils.applyColorToText(requireContext(), updatedText, colorRuleList));
+        sampleTextView.setText(TextColorUtils.applyColorToText(requireContext(), updatedText, ruleList));
     }
 
     @Override

@@ -38,10 +38,10 @@ public class RegisterActivity extends AppCompatActivity {
     private UserController controller;
     private ColorRuleController colorRuleController;
 
-    private String email;
-    private String name;
-    private String password;
-    private String confirmPassword;
+    private String email = "";
+    private String name = "";
+    private String password = "";
+    private String confirmPassword = "";
     private List<ColorRule> ruleList;
 
     private EditText emailInput;
@@ -151,6 +151,9 @@ public class RegisterActivity extends AppCompatActivity {
     private void createAccount() {
         if (email.isEmpty() || name.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (password.length() < 6) {
+            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
             return;
         } else if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
