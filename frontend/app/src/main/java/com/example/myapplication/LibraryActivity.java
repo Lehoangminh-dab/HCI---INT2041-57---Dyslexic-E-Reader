@@ -18,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.model.Book;
+import com.example.myapplication.model.User;
 import com.example.myapplication.utils.textextractor.ImageTextExtractor;
 import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
 import com.example.myapplication.utils.textextractor.TextExtractor;
@@ -27,6 +29,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,6 +76,14 @@ public class LibraryActivity extends AppCompatActivity {
         imageTextExtractor = new ImageTextExtractor(this);
         setViewBehaviors();
     }
+
+//    User user;
+//    Book book = new Book(name, data)
+//
+//    List<Book> books = user.getBooks();
+//    books.add(book);
+
+//    tạo 1 hàm để update cái user lên database
 
     private void setViewBehaviors() {
         setupUploadFileIconBehavior();
