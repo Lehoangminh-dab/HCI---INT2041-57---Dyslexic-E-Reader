@@ -4,6 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -38,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView startButton;
     private FrameLayout createAccButton;
     private ProgressDialog progressDialog;
+    private List<ColorRule> ruleList;
+    private ColorRuleController colorRuleController;
+    private FrameLayout signInBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        signInBtn = findViewById(R.id.signInBtn);
+        colorRuleController = new ColorRuleController(this);
         auth = FirebaseAuth.getInstance();
         controller = new UserController(this);
 
@@ -76,6 +86,15 @@ public class MainActivity extends AppCompatActivity {
                 email = emailInput.getText().toString().trim();
             }
         });
+
+        /*signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
+                startActivity(intent);
+            }
+        });*/
+    }
 
         passwordInput.addTextChangedListener(new TextWatcher() {
             @Override

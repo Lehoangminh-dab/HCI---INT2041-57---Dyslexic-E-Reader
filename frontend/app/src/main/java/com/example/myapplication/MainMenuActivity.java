@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -35,13 +36,15 @@ public class MainMenuActivity extends AppCompatActivity {
         book12 = findViewById(R.id.book12);
 
 
+
+
         loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
 
 
         book1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -49,7 +52,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -57,7 +60,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -65,7 +68,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -73,7 +76,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -81,7 +84,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -89,7 +92,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -97,7 +100,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -105,7 +108,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -113,7 +116,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -121,7 +124,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
@@ -129,7 +132,7 @@ public class MainMenuActivity extends AppCompatActivity {
         book12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainMenuActivity.this, ReadingActivity.class);
+                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
                 startActivity(intent);
             }
         });
