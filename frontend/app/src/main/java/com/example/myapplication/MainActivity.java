@@ -4,13 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -19,11 +15,15 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.controller.ColorRuleController;
 import com.example.myapplication.controller.UserController;
+import com.example.myapplication.model.ColorRule;
 import com.example.myapplication.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,15 +87,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*signInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
-                startActivity(intent);
-            }
-        });*/
-    }
-
         passwordInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -117,6 +108,15 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
         });
+
+        // Uncomment if needed
+        /*signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BookDetailsActivity.class);
+                startActivity(intent);
+            }
+        });*/
     }
 
     private void login() {
@@ -134,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = auth.getCurrentUser();
                         if (firebaseUser != null) {
                             String userId = firebaseUser.getUid();
-                            controller.getUser(userId).thenAccept(user -> handleSuccessfulLogin(user));
-                            progressDialog.dismiss();
+                            controller.getUser(userId).thenAccept(this::handleSuccessfulLogin);
                         }
                     } else {
                         Toast.makeText(this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
