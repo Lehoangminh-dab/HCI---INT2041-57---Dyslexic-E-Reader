@@ -1,6 +1,7 @@
 package com.example.myapplication.controller;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.myapplication.model.ColorRule;
@@ -44,8 +45,7 @@ public class ColorRuleController extends FireBaseController {
             return;
         }
         database.getReference("Rules").child(String.valueOf(rule.getId())).setValue(rule)
-                .addOnSuccessListener(aVoid -> Toast.makeText(context, "Thêm thành công", Toast.LENGTH_LONG))
-                .addOnFailureListener(e -> Toast.makeText(context, "Thêm thất bại", Toast.LENGTH_LONG));
+                .addOnFailureListener(e -> Log.e("Color Rule", "Error saving color rule data"));
     }
 
 
@@ -54,7 +54,8 @@ public class ColorRuleController extends FireBaseController {
             return deleted;
         }
         database.getReference("Rules").child(String.valueOf(event.getId())).removeValue()
-                .addOnSuccessListener(aVoid -> deleted = true);
+                .addOnSuccessListener(aVoid -> deleted = true)
+                .addOnFailureListener(e -> Log.e("Color Rule", "Error deleting color rule data"));;
         return deleted;
     }
 }

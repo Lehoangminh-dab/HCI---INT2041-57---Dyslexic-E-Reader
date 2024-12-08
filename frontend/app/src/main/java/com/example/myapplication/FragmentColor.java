@@ -27,7 +27,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.adapter.ColorRuleAdapter;
 import com.example.myapplication.controller.ColorRuleController;
+import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.ColorRule;
+import com.example.myapplication.model.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,11 +42,16 @@ public class FragmentColor extends Fragment {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    private UserController controller;
+
     private int containerId;
     private String nameRule;
     private String describeRule;
     private int color;
-    private ColorRuleController colorRuleController;
+
+    private User user;
+    private User initialUser;
 
     private ImageView backButton;
     private ListView colorRuleListView;
@@ -68,18 +75,16 @@ public class FragmentColor extends Fragment {
             containerId = args.getInt("containerId", -1);
         }
 
-        colorRuleController = new ColorRuleController(requireActivity());
+        controller = new UserController(requireActivity());
 
         backButton = view.findViewById(R.id.backBtn);
         colorRuleListView = view.findViewById(R.id.colorRuleList);
         ruleList = new ArrayList<>();
         adapter = new ColorRuleAdapter(requireActivity(), ruleList);
+
+        handleReceivedRule();
+
         colorRuleListView.setAdapter(adapter);
-        if (ruleList.isEmpty()) {
-            Log.e("1", "1");
-        } else {
-            Log.e("0", "0");
-        }
 
         addRuleButton = view.findViewById(R.id.addRuleBtn);
 
@@ -96,7 +101,7 @@ public class FragmentColor extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 runnable = () -> showChangeColorRuleDialog(position);
-                handler.postDelayed(runnable, 2000); // 2000ms = 2 giây
+                handler.postDelayed(runnable, 2000);
                 return true;
             }
         });
@@ -114,10 +119,14 @@ public class FragmentColor extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Gson gson = new Gson();
-        String json = gson.toJson(ruleList);
-        editor.putString("colorRules", json);
-        editor.apply();
+        if (!initialUser.equals(user)) {
+            user.setRuleList(ruleList);
+            controller.updateUser(user);
+            Gson gson = new Gson();
+            String json = gson.toJson(user);
+            editor.putString("user", json);
+            editor.apply();
+        }
     }
 
     private void showAddColorRuleDialog() {
@@ -229,9 +238,8 @@ public class FragmentColor extends Fragment {
         addNewRuleButton.setOnClickListener(v -> {
             describeRule = "If you are confusing the letter " + nameRule + ", color it.";
             ColorRule rule = new ColorRule(nameRule, describeRule, color);
-            colorRuleController.addRule(rule);
-//            ruleList.add(rule);
-            onResume();
+            ruleList.add(rule);
+            adapter.notifyDataSetChanged();
             dialog.dismiss();
         });
 
@@ -289,7 +297,7 @@ public class FragmentColor extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                nameRule = enterLetter.getText().toString();
+                nameRule = enterLetter.getText().toString().trim();
                 if (nameRule.isEmpty()) {
                     addNewRuleButton.setEnabled(false);
                 } else {
@@ -358,8 +366,8 @@ public class FragmentColor extends Fragment {
         addNewRuleButton.setOnClickListener(v -> {
             describeRule = "If you are confusing the letter " + nameRule + ", color it.";
             ColorRule rule = new ColorRule(nameRule, describeRule, color);
-            colorRuleController.addRule(rule);
-            onResume();
+            ruleList.add(rule);
+            adapter.notifyDataSetChanged();
             dialog.dismiss();
         });
 
@@ -367,19 +375,20 @@ public class FragmentColor extends Fragment {
     }
 
     private void handleReceivedRule() {
-//        Gson gson = new Gson();
-//        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
-//        Type type = new TypeToken<List<ColorRule>>() {}.getType();
-//        ruleList = gson.fromJson(jsonRetrieved, type);
-//        adapter = new ColorRuleAdapter(getContext(), ruleList);
-        colorRuleController.getAllRules().thenApply(rules -> {
-            if (!rules.isEmpty()) {
-                ruleList.clear();
-                ruleList.addAll(rules);
-                adapter.notifyDataSetChanged();
-            }
-            return null;
-        });
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+        initialUser = new User(user);
+
+        if (user != null && user.getRuleList() != null) {
+            ruleList.clear();
+            ruleList.addAll(user.getRuleList());
+        } else {
+            ruleList.clear();
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     private void replaceFragment(Fragment newFragment) {

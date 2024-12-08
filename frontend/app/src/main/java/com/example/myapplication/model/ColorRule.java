@@ -1,6 +1,7 @@
 package com.example.myapplication.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ColorRule implements Serializable {
     private int id;
@@ -61,5 +62,13 @@ public class ColorRule implements Serializable {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ColorRule colorRule = (ColorRule) o;
+        return id == colorRule.id && color == colorRule.color && isDefault == colorRule.isDefault && Objects.equals(name, colorRule.name) && Objects.equals(describe, colorRule.describe);
     }
 }
