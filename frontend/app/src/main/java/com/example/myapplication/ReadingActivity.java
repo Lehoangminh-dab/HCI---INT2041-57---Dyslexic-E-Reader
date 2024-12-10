@@ -139,7 +139,7 @@ public class ReadingActivity extends AppCompatActivity {
         finishedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ReadingActivity.this, HomeActivity.class);
+                Intent intent = new Intent(ReadingActivity.this, MainMenuActivity.class);
                 startActivity(intent);
             }
         });

@@ -44,7 +44,12 @@
         </activity>
         <activity
             android:name=".ReadingActivity"
-            android:exported="false"></activity>
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".BookDetailsActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>
