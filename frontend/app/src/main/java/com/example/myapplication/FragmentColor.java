@@ -119,8 +119,8 @@ public class FragmentColor extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        user.setRuleList(ruleList);
         if (!initialUser.equals(user)) {
-            user.setRuleList(ruleList);
             controller.updateUser(user);
             Gson gson = new Gson();
             String json = gson.toJson(user);

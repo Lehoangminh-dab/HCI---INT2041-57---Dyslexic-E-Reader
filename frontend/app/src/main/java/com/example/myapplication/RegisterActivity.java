@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.controller.ColorRuleController;
 import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.ColorRule;
+import com.example.myapplication.model.Font;
 import com.example.myapplication.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -167,13 +168,15 @@ public class RegisterActivity extends AppCompatActivity {
                 ruleList.addAll(rules);
             }
 
+            Font font = new Font("dyslexic", 30, 1, 1, 1);
+
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = auth.getCurrentUser();
                             if (firebaseUser != null) {
                                 String userId = firebaseUser.getUid();
-                                User user = new User(userId, email, password, name, ruleList);
+                                User user = new User(userId, email, password, name, ruleList, font, "WORD");
                                 controller.addUser(user);
 
                                 Gson gson = new Gson();

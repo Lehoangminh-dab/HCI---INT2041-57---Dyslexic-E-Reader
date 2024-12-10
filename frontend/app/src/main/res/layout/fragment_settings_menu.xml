@@ -15,6 +15,7 @@
         android:scaleType="fitCenter"/>
 
     <TextView
+        android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/dyslexic_regular"
@@ -220,6 +221,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
+        android:id="@+id/logOutBtn"
         android:layout_marginTop="70dp"
         android:layout_width="wrap_content"
         android:layout_height="40dp"

@@ -23,18 +23,31 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.controller.UserController;
+import com.example.myapplication.model.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+
 public class FragmentHighlight extends Fragment {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    private UserController controller;
+
+    private User user;
+    private User initialUser;
+    private String highLight;
     private int containerId;
     private Switch highlightSwitch;
     private ImageView highlightWordBtn, highlightRulerBtn, highlightDarkBtn, backBtn;
     private TextView textWord, textRuler, textHole;
     private TextView sampleText;
-    private Boolean onHighLight;
-    View darkOverlay;
-    private boolean isHighlightEnabled = true; // Start with highlight enabled
+    private boolean onHighLight;
+    private View darkOverlay;
+//    private boolean isHighlightEnabled = true;
 
     enum HighlightMode {
         WORD, RULER, DARK, OFF
@@ -54,6 +67,8 @@ public class FragmentHighlight extends Fragment {
             containerId = args.getInt("containerId", -1);
         }
 
+        controller = new UserController(requireActivity());
+
         highlightSwitch = view.findViewById(R.id.switch1);
         highlightWordBtn = view.findViewById(R.id.highlight_word_btn);
         highlightRulerBtn = view.findViewById(R.id.highlight_ruler_btn);
@@ -71,7 +86,7 @@ public class FragmentHighlight extends Fragment {
             replaceFragment(fragmentSettingsMenu);
         });
 
-        highlightSwitch.setChecked(true);
+        highlightSwitch.setChecked(onHighLight);
         highlightSwitch.getThumbDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
         setupHighlightSwitch();
@@ -85,18 +100,53 @@ public class FragmentHighlight extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        onHighLight = sharedPreferences.getBoolean("onHightLight", true);
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+        initialUser = new User(user);
+
+        highLight = user.getHighLight();
+
+        if (highLight.equals("OFF")) {
+            applyHighlightMode(HighlightMode.OFF);
+            onHighLight = false;
+            resetHighlight();
+        } else {
+            onHighLight = true;
+            highlightSwitch.getThumbDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+
+            if (highLight.equals("WORD")) {
+                applyHighlightMode(HighlightMode.WORD);
+            } else if (highLight.equals("RULER")) {
+                applyHighlightMode(HighlightMode.RULER);
+            } else if (highLight.equals("DARK")) {
+                applyHighlightMode(HighlightMode.DARK);
+            }
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        user.setHighLight(highLight);
+        if (!initialUser.equals(user)) {
+            controller.updateUser(user);
+            Gson gson = new Gson();
+            String json = gson.toJson(user);
+            editor.putString("user", json);
+            editor.apply();
+        }
     }
 
     private void setupHighlightSwitch() {
         highlightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            isHighlightEnabled = isChecked;
+            onHighLight = isChecked;
             if (isChecked) {
                 highlightSwitch.getThumbDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-                applyHighlightMode(HighlightMode.WORD); // Default to WORD mode when enabled
+                applyHighlightMode(HighlightMode.WORD);
             } else {
-                highlightSwitch.getThumbDrawable().clearColorFilter();
-                applyHighlightMode(HighlightMode.OFF); // Thêm dòng này để lưu chế độ OFF
+                applyHighlightMode(HighlightMode.OFF);
                 resetHighlight();
             }
         });
@@ -104,19 +154,19 @@ public class FragmentHighlight extends Fragment {
 
     private void setupHighlightButtons() {
         highlightWordBtn.setOnClickListener(v -> {
-            if (isHighlightEnabled) {
+            if (onHighLight) {
                 applyHighlightMode(HighlightMode.WORD);
             }
         });
 
         highlightRulerBtn.setOnClickListener(v -> {
-            if (isHighlightEnabled) {
+            if (onHighLight) {
                 applyHighlightMode(HighlightMode.RULER);
             }
         });
 
         highlightDarkBtn.setOnClickListener(v -> {
-            if (isHighlightEnabled) {
+            if (onHighLight) {
                 applyHighlightMode(HighlightMode.DARK);
             }
         });
@@ -124,41 +174,40 @@ public class FragmentHighlight extends Fragment {
 
     private void applyHighlightMode(HighlightMode mode) {
         resetHighlight();
-        saveHighlightMode(mode); // Lưu chế độ highlight đã chọn
+        highLight = mode.name();
 
-        // Reset màu chữ về màu đen
         textWord.setTextColor(Color.BLACK);
         textRuler.setTextColor(Color.BLACK);
         textHole.setTextColor(Color.BLACK);
 
         switch (mode) {
             case WORD:
-                darkOverlay.setVisibility(View.GONE); // Ẩn lớp phủ
+                darkOverlay.setVisibility(View.GONE);
                 highlightWordBtn.setImageResource(R.drawable.ic_highlight_word);
                 highlightRulerBtn.setImageResource(R.drawable.ic_highlight_ruler_alpha);
                 highlightDarkBtn.setImageResource(R.drawable.ic_highlight_dark_alpha);
                 highlightWordBtn.setColorFilter(Color.RED);
-                textWord.setTextColor(Color.RED); // Đổi màu chữ dưới "Word" thành đỏ
+                textWord.setTextColor(Color.RED);
                 applyWordHighlight();
                 break;
 
             case RULER:
-                darkOverlay.setVisibility(View.GONE); // Ẩn lớp phủ
+                darkOverlay.setVisibility(View.GONE);
                 highlightWordBtn.setImageResource(R.drawable.ic_highlight_word_alpha);
                 highlightRulerBtn.setImageResource(R.drawable.ic_highlight_ruler);
                 highlightDarkBtn.setImageResource(R.drawable.ic_highlight_dark_alpha);
                 highlightRulerBtn.setColorFilter(Color.RED);
-                textRuler.setTextColor(Color.RED); // Đổi màu chữ dưới "Ruler" thành đỏ
+                textRuler.setTextColor(Color.RED);
                 applyRulerHighlight();
                 break;
 
             case DARK:
-                darkOverlay.setVisibility(View.VISIBLE); // Hiển thị lớp phủ
+                darkOverlay.setVisibility(View.VISIBLE);
                 highlightWordBtn.setImageResource(R.drawable.ic_highlight_word_alpha);
                 highlightRulerBtn.setImageResource(R.drawable.ic_highlight_ruler_alpha);
                 highlightDarkBtn.setImageResource(R.drawable.ic_highlight_dark);
                 highlightDarkBtn.setColorFilter(Color.RED);
-                textHole.setTextColor(Color.RED); // Đổi màu chữ dưới "Hole" thành đỏ
+                textHole.setTextColor(Color.RED);
                 applyDarkHighlight();
                 break;
         }
@@ -166,7 +215,6 @@ public class FragmentHighlight extends Fragment {
 
 
     private void applyWordHighlight() {
-        // Only highlight the word "This" and dim the rest of the text
         SpannableString wordHighlightedText = new SpannableString("This is a sample");
         wordHighlightedText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         wordHighlightedText.setSpan(new ForegroundColorSpan(Color.GRAY), 5, wordHighlightedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -174,7 +222,6 @@ public class FragmentHighlight extends Fragment {
     }
 
     private void applyRulerHighlight() {
-        // Keep "This is a" visible and dim other parts if needed
         SpannableString rulerHighlightedText = new SpannableString("This is a sample");
         rulerHighlightedText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, 8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         rulerHighlightedText.setSpan(new ForegroundColorSpan(Color.GRAY), 9, rulerHighlightedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -182,29 +229,20 @@ public class FragmentHighlight extends Fragment {
     }
 
     private void applyDarkHighlight() {
-        // Tô sáng từ "This" với nền sáng, sử dụng SpannableString.
         SpannableString darkHighlightedText = new SpannableString("This is a sample");
         darkHighlightedText.setSpan(new BackgroundColorSpan(Color.parseColor("#F5DEB3")), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Nền sáng cho từ "This"
         darkHighlightedText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Màu chữ tối cho "This"
         darkHighlightedText.setSpan(new ForegroundColorSpan(Color.parseColor("#555555")), 5, darkHighlightedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Làm mờ các chữ còn lại
-
         sampleText.setText(darkHighlightedText);
     }
 
-
     private void resetHighlight() {
+        highlightSwitch.getThumbDrawable().clearColorFilter();
         highlightWordBtn.setColorFilter(null);
         highlightRulerBtn.setColorFilter(null);
         highlightDarkBtn.setColorFilter(null);
-
-        // Reset sampleText styling to original state
         sampleText.setTextColor(Color.BLACK);
         sampleText.setText("This is a sample");
-    }
-
-    private void saveHighlightMode(HighlightMode mode) {
-        editor.putString("highlight_mode", mode.name()); // Lưu tên của chế độ highlight
-        editor.apply();
     }
 
     private void replaceFragment(Fragment newFragment) {
