@@ -43,6 +43,7 @@ public class ColorRuleAdapter extends ArrayAdapter<ColorRule> {
 
         nameRule.setText(rule.getName());
         nameRule.setTextColor(rule.getColor());
+
         describeRule.setText(rule.getDescribe());
         changeColorButton.setColorFilter(rule.getColor());
 

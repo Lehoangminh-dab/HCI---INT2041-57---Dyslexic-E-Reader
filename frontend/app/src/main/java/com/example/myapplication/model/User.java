@@ -14,7 +14,7 @@ public class User implements Serializable {
     private List<ColorRule> ruleList;
     private Font font;
     private String highLight;
-    private List<Book> books;
+    private List<Book> books, favouriteList, recommendedList, currentlyList;
 
     public User() {
     }
@@ -28,6 +28,10 @@ public class User implements Serializable {
         font = null;
         highLight = null;
         books = null;
+        favouriteList = null;
+        recommendedList = null;
+        currentlyList = null;
+
     }
 
     public User(User user) {

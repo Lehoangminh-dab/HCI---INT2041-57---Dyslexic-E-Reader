@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.model.Book;
 import com.example.myapplication.model.ColorRule;
 import com.example.myapplication.utils.TextColorUtils;
 import com.google.gson.Gson;
@@ -66,6 +67,7 @@ public class ReadingActivity extends AppCompatActivity {
     private String content;
     private SpannableString spannableString;
     private GestureDetector doubleTapGestureDetector;
+    private Book currentBook;
 
     @SuppressLint({"WrongViewCast", "MissingInflatedId"})
     @Override
@@ -83,6 +85,9 @@ public class ReadingActivity extends AppCompatActivity {
         bookmarkBtn = findViewById(R.id.bookmark_btn);
         tuneBtn = findViewById(R.id.tune_btn);
         finishedBtn = findViewById(R.id.finished_btn);
+
+        Intent receivedIntent = getIntent();
+        currentBook = (Book) receivedIntent.getSerializableExtra("book");
 
         readingProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
 
@@ -173,7 +178,7 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        content = sharedPreferences.getString("content", "Error Loading Content");
+        content = sharedPreferences.getString("content", currentBook.getContent());
         fontName = sharedPreferences.getString("font", "dyslexic");
         size = sharedPreferences.getInt("size", 42);
         lineSpace = sharedPreferences.getFloat("lineSpace", 1);
