@@ -12,8 +12,13 @@
 /captures
 .externalNativeBuild
 .cxx
-local.properties
-/.idea
 /backend/.env
 /backend/venv
 /backend/__pycache__
+/frontend/.idea
+/frontend/.idea/caches
+/frontend/.idea/libraries
+/frontend/.idea/modules.xml
+/frontend/.idea/workspace.xml
+/frontend/.idea/navEditor.xml
+/frontend/.idea/assetWizardSettings.xml

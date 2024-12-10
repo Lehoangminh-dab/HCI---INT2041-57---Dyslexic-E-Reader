@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.model.Book;
+
 public class BookDetailsActivity extends AppCompatActivity {
 
     private Button readBtn, wordCountBtn;
@@ -27,6 +29,19 @@ public class BookDetailsActivity extends AppCompatActivity {
         wordCountBtn = findViewById(R.id.wordCountBtn);
         bookPoster = findViewById(R.id.bookPoster);
         eraseBtn = findViewById(R.id.eraseBtn);
+        bookTitle = findViewById(R.id.bookTitle);
+        bookAuthor = findViewById(R.id.bookAuthor);
+        bookSum = findViewById(R.id.bookSum);
+
+        //Receive data from previous activity
+        Intent receivedIntent = getIntent();
+        Book currentBook = (Book) receivedIntent.getSerializableExtra("book");
+
+        wordCountBtn.setText(String.valueOf(String.format("%d word", currentBook.getTotalWord())));
+        bookTitle.setText(currentBook.getTitle());
+        bookAuthor.setText(currentBook.getAuthor());
+        bookSum.setText(currentBook.getSum());
+
 
         Dialog eraseFragment = new Dialog(BookDetailsActivity.this);
         eraseFragment.setContentView(R.layout.fragment_erase);
@@ -37,6 +52,7 @@ public class BookDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(BookDetailsActivity.this, ReadingActivity.class);
+                intent.putExtra("book", currentBook);
                 startActivity(intent);
             }
         });
