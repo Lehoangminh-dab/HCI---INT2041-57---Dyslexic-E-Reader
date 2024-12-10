@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.1"
+agp = "8.6.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -13,6 +13,11 @@ activityCompose = "1.8.0"
 composeBom = "2024.04.01"
 navigationFragment = "2.6.0"
 navigationUi = "2.6.0"
+firebaseAuth = "23.1.0"
+textRecognitionVersion = "17.0.0"
+playServicesMlkitTextRecognitionCommon = "19.1.0"
+playServicesMlkitTextRecognition = "19.0.1"
+ucrop = "2.2.8"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -25,6 +30,8 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "textRecognitionVersion" }
+ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -34,6 +41,9 @@ ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+play-services-mlkit-text-recognition-common = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-common", version.ref = "playServicesMlkitTextRecognitionCommon" }
+play-services-mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "playServicesMlkitTextRecognition" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

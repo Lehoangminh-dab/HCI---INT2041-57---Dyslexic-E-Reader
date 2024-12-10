@@ -1,17 +1,38 @@
 package com.example.myapplication;
 
+import static android.Manifest.permission.CAMERA;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+
+
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -19,19 +40,8 @@ public class HomeActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
 
     private ImageView openBookButton;
-    private String content = "My school is my favorite place. I have" +
-            " many friends in my school who always help me. My teachers" +
-            " are very friendly and take care of my parents. Our school" +
-            " is very beautiful. It has many classrooms, a playground, a" +
-            " garden, and canteen. Our school is very big and famous. People" +
-            " living in our city send their children to study here. Our" +
-            " school also provides free education to poor children. Every" +
-            " student studying here is supports and plays with us. Our seniors" +
-            " are very friendly as well. Our school also does social services" +
-            " like planting trees every month. I am proud of my school, and" +
-            " love it very much. Engage your kid into diverse thoughts and" +
-            " motivate them to improve their English with our Essay for Class" +
-            " 1 and avail the Simple Essays suitable for them.";
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int CAMERA_CAPTURE_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +52,18 @@ public class HomeActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        create();
+        openBookButton = findViewById(R.id.openBookBtn);
+
+        openBookButton.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{CAMERA}, CAMERA_REQUEST_CODE);
+            } else {
+                openCamera();
+            }
+        });
+
+        loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
+
     }
 
     @Override
@@ -50,24 +71,62 @@ public class HomeActivity extends AppCompatActivity {
         super.onStop();
     }
 
-
-    private void create() {
-        openBookButton = findViewById(R.id.openBookBtn);
-
-        openBookButton.setOnClickListener(v -> {
-            editor.putString("content", content);
-            editor.apply();
-            Intent intent = new Intent(this, ReadingActivity.class);
-            startActivity(intent);
-        });
-
-        loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_CAPTURE_CODE);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_CAPTURE_CODE && resultCode == RESULT_OK && data != null) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            processImage(photo);
+        }
+    }
+
+    private void processImage(Bitmap bitmap) {
+        InputImage image = InputImage.fromBitmap(bitmap, 0);
+        TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+
+        recognizer.process(image)
+                .addOnSuccessListener(text -> {
+                    String extractedText = text.getText();
+                    if (!extractedText.isEmpty()) {
+                        // Lưu văn bản vào SharedPreferences
+                        editor.putString("content", extractedText);
+                        editor.apply();
+
+                        // Chuyển sang ReadingActivity
+                        Intent intent = new Intent(this, ReadingActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(this, "No text detected in the image.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to process image: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+    }
+
+
 
     private void loadFragment(int containerId, Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(containerId, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera permission is required to scan text.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

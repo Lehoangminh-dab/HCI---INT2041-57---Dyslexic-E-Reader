@@ -97,6 +97,11 @@ dependencies {
     implementation("com.itextpdf:io:8.0.5")
     implementation("com.google.mlkit:text-recognition:16.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
