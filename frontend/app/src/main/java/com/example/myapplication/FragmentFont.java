@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.ColorRule;
 
+import com.example.myapplication.model.Font;
 import com.example.myapplication.model.User;
 import com.example.myapplication.utils.TextColorUtils;
 import com.google.gson.Gson;
@@ -38,15 +39,15 @@ public class FragmentFont extends Fragment {
 
     private UserController controller;
 
+    private User user;
+    private Font font;
     private int containerId;
     private String fontName;
     private int size;
     private float lineSpace;
     private int wordSpace;
+    private int letterSpace;
     private List<ColorRule> ruleList;
-
-    private User user;
-    private User initialUser;
 
     private ImageView backButton;
     private LinearLayout maliFontButton;
@@ -78,6 +79,8 @@ public class FragmentFont extends Fragment {
             containerId = args.getInt("containerId", -1);
         }
 
+        controller = new UserController(requireActivity());
+
         backButton = view.findViewById(R.id.backBtn);
         maliFontButton = view.findViewById(R.id.maliFontBtn);
         maliText = view.findViewById(R.id.maliText);
@@ -100,6 +103,7 @@ public class FragmentFont extends Fragment {
 
         maliFontButton.setOnClickListener(v -> {
             fontName = "mali";
+            font.setName(fontName);
             maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             maliSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             dyslexicText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray));
@@ -109,6 +113,7 @@ public class FragmentFont extends Fragment {
 
         dyslexicFontButton.setOnClickListener(v -> {
             fontName = "dyslexic";
+            font.setName(fontName);
             dyslexicText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             dyslexicSample.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             maliText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray));
@@ -121,6 +126,7 @@ public class FragmentFont extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 size = progress;
+                font.setSize(size);
                 updateSampleText();
             }
 
@@ -137,6 +143,7 @@ public class FragmentFont extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 lineSpace = progress / 10.0f;
+                font.setLineSpace(lineSpace);
                 updateSampleText();
             }
 
@@ -151,6 +158,7 @@ public class FragmentFont extends Fragment {
 
         wordSpace1Button.setOnClickListener(v -> {
             wordSpace = 1;
+            font.setWordSpace(wordSpace);
             wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
             wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
@@ -159,6 +167,7 @@ public class FragmentFont extends Fragment {
 
         wordSpace2Button.setOnClickListener(v -> {
             wordSpace = 2;
+            font.setWordSpace(wordSpace);
             wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
             wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
@@ -167,6 +176,7 @@ public class FragmentFont extends Fragment {
 
         wordSpace3Button.setOnClickListener(v -> {
             wordSpace = 3;
+            font.setWordSpace(wordSpace);
             wordSpace1Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
             wordSpace2Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray));
             wordSpace3Button.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
@@ -184,16 +194,16 @@ public class FragmentFont extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fontName = sharedPreferences.getString("font", "dyslexic");
-        size = sharedPreferences.getInt("size", 42);
-        lineSpace = sharedPreferences.getFloat("lineSpace", 1);
-        wordSpace= sharedPreferences.getInt("wordSpace", 1);
         Gson gson = new Gson();
         String jsonRetrieved = sharedPreferences.getString("user", null);
         Type type = new TypeToken<User>() {}.getType();
         user = gson.fromJson(jsonRetrieved, type);
-        initialUser = new User(user);
 
+        font = user.getFont();
+        fontName = font.getName();
+        size = font.getSize();
+        lineSpace = font.getLineSpace();
+        wordSpace= font.getWordSpace();
         ruleList = user.getRuleList();
 
         if (fontName.contains("mali")) {
@@ -235,12 +245,13 @@ public class FragmentFont extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        editor.putString("font", fontName);
-        editor.putInt("size", size);
-        editor.putFloat("lineSpace", lineSpace);
-        editor.putInt("wordSpace", wordSpace);
+    public void onPause() {
+        super.onPause();
+        user.setFont(font);
+        controller.updateUser(user);
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        editor.putString("user", json);
         editor.apply();
     }
 

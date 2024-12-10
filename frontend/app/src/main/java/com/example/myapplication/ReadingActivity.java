@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Layout;
-import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -36,6 +35,8 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.model.ColorRule;
+import com.example.myapplication.model.Font;
+import com.example.myapplication.model.User;
 import com.example.myapplication.utils.TextColorUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -56,12 +57,16 @@ public class ReadingActivity extends AppCompatActivity {
     private Runnable removeHighlightRunnable; // Khai báo runnable toàn cục
     private String[] pages;  // Mảng chứa các đoạn văn của cuốn sách
     private int currentPage = 0;
+
     private SharedPreferences sharedPreferences;
+    private User user;
+    private Font font;
     private String fontName;
     private int size;
     private float lineSpace;
     private int wordSpace;
-    private List<ColorRule> colorRuleList;
+    private List<ColorRule> ruleList;
+    private String highlightMode;
 
     private String content;
     private SpannableString spannableString;
@@ -73,6 +78,8 @@ public class ReadingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reading);
+
+        sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
         textView = findViewById(R.id.text);
         arrowLeftBtn = findViewById(R.id.arrow_left_btn);
@@ -129,8 +136,6 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
-
-
         finishedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,10 +158,6 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
-        // Khởi tạo SharedPreferences để lưu chế độ highlight
-        sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        String highlightMode = sharedPreferences.getString("highlight_mode", "WORD");
-
         // Áp dụng chế độ highlight đã lưu
         applyHighlightMode(highlightMode);
 
@@ -173,17 +174,21 @@ public class ReadingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        content = sharedPreferences.getString("content", "Error Loading Content");
-        fontName = sharedPreferences.getString("font", "dyslexic");
-        size = sharedPreferences.getInt("size", 42);
-        lineSpace = sharedPreferences.getFloat("lineSpace", 1);
-        wordSpace= sharedPreferences.getInt("wordSpace", 1);
         Gson gson = new Gson();
-        String jsonRetrieved = sharedPreferences.getString("colorRules", null);
-        Type type = new TypeToken<List<ColorRule>>() {}.getType();
-        colorRuleList = gson.fromJson(jsonRetrieved, type);
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
 
-//        updatePage();
+        // cần sửa lại
+        content = sharedPreferences.getString("content", "Error Loading Content");
+
+        font = user.getFont();
+        fontName = font.getName();
+        size = font.getSize();
+        lineSpace = font.getLineSpace();
+        wordSpace= font.getWordSpace();
+        ruleList = user.getRuleList();
+        highlightMode = user.getHighLight();
     }
 
     // Phương thức chia nhỏ nội dung thành các trang dựa trên kích thước TextView
@@ -240,7 +245,7 @@ public class ReadingActivity extends AppCompatActivity {
             } else {
                 tempString = tempString.replaceAll("\\s+", "      ");
             }
-            spannableString = TextColorUtils.applyColorToText(this, tempString, colorRuleList);
+            spannableString = TextColorUtils.applyColorToText(this, tempString, ruleList);
             textView.setText(spannableString);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên các trang nội dung
 
@@ -269,7 +274,7 @@ public class ReadingActivity extends AppCompatActivity {
             } else {
                 tempString = tempString.replaceAll("\\s+", "      ");
             }
-            spannableString = TextColorUtils.applyColorToText(this, tempString, colorRuleList);
+            spannableString = TextColorUtils.applyColorToText(this, tempString, ruleList);
             textView.setText(spannableString);
             completionOverlay.setVisibility(View.GONE);  // Ẩn overlay trên trang 5
 

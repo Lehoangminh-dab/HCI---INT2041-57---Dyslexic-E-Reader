@@ -19,14 +19,14 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String id, String email, String password, String name, List<ColorRule> ruleList) {
+    public User(String id, String email, String password, String name, List<ColorRule> ruleList, Font font, String highLight) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.ruleList = ruleList;
-        font = null;
-        highLight = null;
+        this.font = font;
+        this.highLight = highLight;
         books = null;
     }
 

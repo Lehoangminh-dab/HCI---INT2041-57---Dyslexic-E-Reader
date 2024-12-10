@@ -87,19 +87,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
 
-    <TextView
-        android:id="@+id/startBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:text="Start without account"
-        android:textColor="@color/black"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/createAccBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <FrameLayout
         android:id="@+id/createAccBtn"
         android:layout_width="match_parent"
