@@ -22,6 +22,9 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://repo.itextsupport.com/releases")
         }
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 }
 

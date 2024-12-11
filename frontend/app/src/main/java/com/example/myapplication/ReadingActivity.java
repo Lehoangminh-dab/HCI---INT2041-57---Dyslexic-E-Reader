@@ -186,6 +186,7 @@ public class ReadingActivity extends AppCompatActivity {
 
         // cần sửa lại
         content = sharedPreferences.getString("content", "Error Loading Content");
+        highlightMode = sharedPreferences.getString("highlight_mode", "default_mode"); // Giá trị mặc định
 
         font = user.getFont();
         fontName = font.getName();
@@ -532,6 +533,11 @@ public class ReadingActivity extends AppCompatActivity {
 
     private void applyHighlightMode(String mode) {
         ConstraintLayout readingLayout = findViewById(R.id.reading_layout);
+
+        if (mode == null) {
+            Log.w(LOG_TAG, "Highlight mode is null. Exiting applyHighlightMode.");
+            return;
+        }
 
         if (mode.equals("WORD")) {
             initTouchEventWord();
