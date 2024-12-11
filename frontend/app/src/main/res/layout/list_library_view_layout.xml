@@ -22,12 +22,12 @@
         />
     <TextView
         android:id="@+id/library_view_name"
-        android:layout_width="95dp"
-        android:layout_height="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="50dp"
         android:layout_centerVertical="true"
-        android:textAppearance="@style/your_books"
+        android:textAppearance="@style/library_view_name"
         android:gravity="top"
         />
 

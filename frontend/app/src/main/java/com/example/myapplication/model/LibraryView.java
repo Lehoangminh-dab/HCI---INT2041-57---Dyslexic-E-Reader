@@ -2,6 +2,8 @@ package com.example.myapplication.model;
 
 import android.graphics.drawable.Drawable;
 
+import androidx.fragment.app.Fragment;
+
 import java.io.Serializable;
 import java.util.List;
 

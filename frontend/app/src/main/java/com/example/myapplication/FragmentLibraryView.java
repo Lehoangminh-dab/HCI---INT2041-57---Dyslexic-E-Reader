@@ -1,39 +1,88 @@
 package com.example.myapplication;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.adapter.LibraryViewAdapter;
+import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.Book;
 import com.example.myapplication.model.LibraryView;
+import com.example.myapplication.model.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FragmentLibraryView extends Fragment {
+    private SharedPreferences sharedPreferences;
     private ListView libraryListView;
     private LibraryViewAdapter libraryViewAdapter;
     private List<LibraryView> libraryViews;
+    private UserController userController;
+    private User user;
+    private List<Book> allBooks;
     public FragmentLibraryView() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        // Render the fragment
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_library_view, container, false);
         libraryListView = view.findViewById(R.id.list_library_view);
         libraryViews = createLibraryViews();
         libraryViewAdapter = new LibraryViewAdapter(requireActivity(), libraryViews);
         libraryListView.setAdapter(libraryViewAdapter);
+        // Set item click listener
+        libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FragmentLibraryBooksView fragmentLibraryBooksView = new FragmentLibraryBooksView();
+
+                // Create a Bundle to pass the books list
+                Bundle bundle = new Bundle();
+                LibraryView selectedLibraryView = libraryViews.get(position);
+                bundle.putSerializable("books", (Serializable) selectedLibraryView.getBooks());
+
+                // Set the arguments to the fragment
+                fragmentLibraryBooksView.setArguments(bundle);
+
+                // Replace the current fragment with FragmentLibraryBooksView
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.view_container, fragmentLibraryBooksView);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            }
+        });
+
+        // Get books stored on Firebase
+        sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        userController = new UserController(requireActivity());
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = new User(Objects.requireNonNull(gson.fromJson(jsonRetrieved, type)));
+        allBooks = user.getBooks();
         return view;
     }
 
