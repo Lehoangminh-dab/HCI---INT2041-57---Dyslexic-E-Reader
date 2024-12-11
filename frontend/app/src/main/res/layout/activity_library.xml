@@ -5,7 +5,8 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".LibraryActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -93,6 +94,51 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@+id/uploadFileLabelTextView"
                     app:layout_constraintTop_toBottomOf="@+id/uploadFileLabelTextView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/open_book_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/open_book_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/upload_file_icon"
+                    android:src="@drawable/test_book"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/scanBookLabelTextView"
+                    android:layout_width="106dp"
+                    android:layout_height="27dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/scan_a_book_label"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/open_book_icon"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/open_book_icon"
+                    app:layout_constraintStart_toStartOf="@+id/open_book_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/open_book_icon" />
+
+                <TextView
+                    android:id="@+id/scanBookDescriptionTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:alpha="0.75"
+                    android:text="@string/scan_book_description"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="@+id/scanBookLabelTextView"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="@+id/scanBookLabelTextView"
+                    app:layout_constraintTop_toBottomOf="@+id/scanBookLabelTextView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

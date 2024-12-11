@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Dyslexic eReader</string>
     <string name="upload_file_label">Upload a File</string>
+    <string name="scan_a_book_label">Scan a Book</string>
     <string name="upload_file_description">Add your own documents</string>
+    <string name="scan_book_description">Add from printed text</string>
     <string name="upload_file_icon">upload_file_icon</string>
     <string name="library_title">Library</string>
     <string name="title_activity_setting">Setting</string>
