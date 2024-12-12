@@ -178,35 +178,35 @@ public class RegisterActivity extends AppCompatActivity {
                if (!books.isEmpty()) {
                    bookList.addAll(books);
                }
-            });
 
-            Font font = new Font("dyslexic", 30, 1, 1, 1);
+                Font font = new Font("dyslexic", 30, 1, 1, 1);
 
-            auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            FirebaseUser firebaseUser = auth.getCurrentUser();
-                            if (firebaseUser != null) {
-                                String userId = firebaseUser.getUid();
-                                User user = new User(userId, email, password, name, ruleList, font, "WORD", bookList);
-                                controller.addUser(user);
+                auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser firebaseUser = auth.getCurrentUser();
+                                if (firebaseUser != null) {
+                                    String userId = firebaseUser.getUid();
+                                    User user = new User(userId, email, password, name, ruleList, font, "WORD", bookList);
+                                    controller.addUser(user);
 
-                                Gson gson = new Gson();
-                                String json = gson.toJson(user);
-                                editor.putString("user", json);
-                                editor.apply();
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(user);
+                                    editor.putString("user", json);
+                                    editor.apply();
+                                }
+                            } else {
+                                Log.e("Register", "Error creating account", task.getException());
                             }
-                        } else {
-                            Log.e("Register", "Error creating account", task.getException());
-                        }
 
-                        progressDialog.dismiss();
+                            progressDialog.dismiss();
 
-                        Intent intent = new Intent(this, MainMenuActivity.class);
-                        startActivity(intent);
+                            Intent intent = new Intent(this, MainMenuActivity.class);
+                            startActivity(intent);
 
-                        finish();
-                    });
+                            finish();
+                        });
+            });
         });
     }
 

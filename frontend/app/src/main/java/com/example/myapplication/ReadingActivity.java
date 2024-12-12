@@ -143,7 +143,7 @@ public class ReadingActivity extends AppCompatActivity {
         });
 
         finishedBtn.setOnClickListener(v -> {
-            currentBook.setComplete(true);
+            currentBook.setIsComplete("true");
             Intent intent = new Intent(ReadingActivity.this, MainMenuActivity.class);
             startActivity(intent);
         });
@@ -190,6 +190,8 @@ public class ReadingActivity extends AppCompatActivity {
         wordSpace= font.getWordSpace();
         ruleList = user.getRuleList();
         highlightMode = user.getHighLight();
+
+        applyHighlightMode(highlightMode);
     }
 
     // Phương thức chia nhỏ nội dung thành các trang dựa trên kích thước TextView

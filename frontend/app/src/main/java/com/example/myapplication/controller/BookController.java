@@ -29,8 +29,8 @@ public class BookController extends FireBaseController {
         database.getReference("Books").get().addOnSuccessListener(dataSnapshot -> {
             List<Book> books = new ArrayList<>();
             for (DataSnapshot data : dataSnapshot.getChildren()) {
-                Book book = (Book) data.getValue(Book.class);
-                if (book != null) {
+                if (data.getValue(Book.class) != null) {
+                    Book book = new Book(data.getValue(Book.class));
                     books.add(book);
                 }
             }
