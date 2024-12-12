@@ -46,6 +46,17 @@ public class FragmentLibraryView extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         // Render the fragment
         super.onCreateView(inflater, container, savedInstanceState);
+        // Get data from firebase
+        sharedPreferences = getActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+        allBooks = new ArrayList<>();
+        if (user != null && user.getBookList() != null) {
+            allBooks.addAll(user.getBookList());
+        }
+        // Render view
         View view = inflater.inflate(R.layout.fragment_library_view, container, false);
         libraryListView = view.findViewById(R.id.list_library_view);
         libraryViews = createLibraryViews();
@@ -65,14 +76,6 @@ public class FragmentLibraryView extends Fragment {
             }
         });
 
-        // Get books stored on Firebase
-//        sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
-//        userController = new UserController(requireActivity());
-//        Gson gson = new Gson();
-//        String jsonRetrieved = sharedPreferences.getString("user", null);
-//        Type type = new TypeToken<User>() {}.getType();
-//        user = new User(Objects.requireNonNull(gson.fromJson(jsonRetrieved, type)));
-//        allBooks = user.getBookList();
         return view;
     }
 
@@ -86,43 +89,47 @@ public class FragmentLibraryView extends Fragment {
         return libraryViews;
     }
 
-    // TODO: Retrieve data from firebase.
+    // Modify these methods to use the class's allBooks
     private LibraryView createYourBooksView() {
-        List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable yourBooksIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_your_books,
-                null);
-        return new LibraryView("Your Books", allBooks, yourBooksIcon);
+        Drawable yourBooksIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_your_books, null);
+        return new LibraryView("Your Books", new ArrayList<>(allBooks), yourBooksIcon);
     }
 
-    // TODO: Retrieve data from firebase.
     private LibraryView createFavouritesView() {
-        List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable favouritesIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_favourites,
-                null);
-        return new LibraryView("Favourites", allBooks, favouritesIcon);
+        // Filter favourites if needed
+        List<Book> favouriteBooks = new ArrayList<>();
+        for (Book book : allBooks) {
+            if (book.getIsFavourite().equals("true")) {
+                favouriteBooks.add(book);
+            }
+        }
+        Drawable favouritesIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_favourites, null);
+        return new LibraryView("Favourites", favouriteBooks, favouritesIcon);
     }
 
-    // TODO: Retrieve data from firebase.
     private LibraryView createReadingView() {
-        List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable readingIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading,
-                null);
-        return new LibraryView("Reading", allBooks, readingIcon);
+        // Filter reading books if needed
+        List<Book> readingBooks = new ArrayList<>();
+        for (Book book : allBooks) {
+            if (book.getIsComplete().equals("false")) {
+                readingBooks.add(book);
+            }
+        }
+
+        Drawable readingIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null);
+        return new LibraryView("Reading", readingBooks, readingIcon);
     }
 
-    // TODO: Retrieve data from firebase.
     private LibraryView createCompletedView() {
-        List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable completedIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_completed,
-                null);
-        return new LibraryView("Completed", allBooks, completedIcon);
+        // Filter completed books if needed
+        List<Book> completedBooks = new ArrayList<>();
+        for (Book book : allBooks) {
+            if (book.getIsComplete().equals("true")) {
+                completedBooks.add(book);
+            }
+        }
+        Drawable completedIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_completed, null);
+        return new LibraryView("Completed", completedBooks, completedIcon);
     }
 }
+
