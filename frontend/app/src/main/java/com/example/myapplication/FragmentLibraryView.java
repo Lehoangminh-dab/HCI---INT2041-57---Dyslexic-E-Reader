@@ -3,6 +3,9 @@ package com.example.myapplication;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -72,6 +75,19 @@ public class FragmentLibraryView extends Fragment {
                 fragmentTransaction.replace(R.id.view_container, fragmentLibraryBooksView);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
+
+                // Replace the library title fragment with this view's title fragment.
+                FragmentLibraryViewTitle fragmentLibraryViewTitle = new FragmentLibraryViewTitle();
+                Bundle bundle2 = new Bundle();
+                bundle2.putSerializable("library_view", (Serializable) selectedLibraryView);
+
+                fragmentLibraryViewTitle.setArguments(bundle2);
+
+                FragmentManager fragmentManager2 = requireActivity().getSupportFragmentManager();
+                fragmentManager2.beginTransaction()
+                        .replace(R.id.title_container, fragmentLibraryViewTitle)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
