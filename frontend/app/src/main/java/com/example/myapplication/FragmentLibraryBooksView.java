@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,13 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.adapter.BookAdapter2;
 import com.example.myapplication.model.Book;
+import com.example.myapplication.model.LibraryView;
 
 import java.util.List;
 
 public class FragmentLibraryBooksView extends Fragment {
     private ListView bookListView;
     private List<Book> books;
-    private ImageView backButton;
 
     public FragmentLibraryBooksView() {}
 

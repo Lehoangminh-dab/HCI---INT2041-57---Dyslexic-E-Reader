@@ -2,10 +2,8 @@ package com.example.myapplication;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,8 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.adapter.LibraryViewAdapter;
 import com.example.myapplication.controller.UserController;
@@ -59,46 +55,24 @@ public class FragmentLibraryView extends Fragment {
         libraryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FragmentLibraryBooksView fragmentLibraryBooksView = new FragmentLibraryBooksView();
-
-                // Create a Bundle to pass the books list
-                Bundle bundle = new Bundle();
                 LibraryView selectedLibraryView = libraryViews.get(position);
-                bundle.putSerializable("books", (Serializable) selectedLibraryView.getBooks());
 
-                // Set the arguments to the fragment
-                fragmentLibraryBooksView.setArguments(bundle);
-
-                // Replace the current fragment with FragmentLibraryBooksView
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.view_container, fragmentLibraryBooksView);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-
-                // Replace the library title fragment with this view's title fragment.
-                FragmentLibraryViewTitle fragmentLibraryViewTitle = new FragmentLibraryViewTitle();
-                Bundle bundle2 = new Bundle();
-                bundle2.putSerializable("library_view", (Serializable) selectedLibraryView);
-
-                fragmentLibraryViewTitle.setArguments(bundle2);
-
-                FragmentManager fragmentManager2 = requireActivity().getSupportFragmentManager();
-                fragmentManager2.beginTransaction()
-                        .replace(R.id.title_container, fragmentLibraryViewTitle)
-                        .addToBackStack(null)
-                        .commit();
+                // Start activity for ActivityLibraryView
+                Intent intent = new Intent(requireActivity(), ActivityLibraryView.class);
+                intent.putExtra("view_name", selectedLibraryView.getName());
+                intent.putExtra("books", (Serializable) selectedLibraryView.getBooks());
+                startActivity(intent);
             }
         });
 
         // Get books stored on Firebase
-        sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        userController = new UserController(requireActivity());
-        Gson gson = new Gson();
-        String jsonRetrieved = sharedPreferences.getString("user", null);
-        Type type = new TypeToken<User>() {}.getType();
-        user = new User(Objects.requireNonNull(gson.fromJson(jsonRetrieved, type)));
-        allBooks = user.getBookList();
+//        sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", MODE_PRIVATE);
+//        userController = new UserController(requireActivity());
+//        Gson gson = new Gson();
+//        String jsonRetrieved = sharedPreferences.getString("user", null);
+//        Type type = new TypeToken<User>() {}.getType();
+//        user = new User(Objects.requireNonNull(gson.fromJson(jsonRetrieved, type)));
+//        allBooks = user.getBookList();
         return view;
     }
 

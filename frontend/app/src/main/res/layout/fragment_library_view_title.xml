@@ -27,15 +27,4 @@
         android:layout_toEndOf="@+id/back_arrow"
         android:gravity="center_vertical"
         android:textAppearance="@style/library_view_name" />
-
-    <ImageView
-        android:id="@+id/view_logo"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="38dp"
-        android:layout_toEndOf="@+id/view_title"
-        android:clipToOutline="true"
-        android:gravity="center_vertical" />
 </RelativeLayout>
