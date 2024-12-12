@@ -23,8 +23,9 @@ public class ActivityLibraryView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_library_view);
+        EdgeToEdge.enable(this);
+
 
         Intent intent = getIntent();
         String viewName = intent.getStringExtra("view_name");
