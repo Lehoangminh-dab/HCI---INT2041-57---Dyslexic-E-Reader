@@ -1,23 +1,24 @@
 package com.example.myapplication.adapter;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.BookDetailsActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.ReadingActivity;
 import com.example.myapplication.model.Book;
 
 import java.util.List;
@@ -44,18 +45,39 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.BookAdapter1
             return;
         }
         holder.bookTitle1.setText(book.getTitle());
-        holder.bookLayout1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickGoToDetails(book);
-            }
-        });
+        holder.bookLayout1.setOnClickListener(v -> showBookDetailsDialog(book));
     }
 
-    private void onClickGoToDetails(Book book) {
-        Intent intent = new Intent(context, BookDetailsActivity.class);
-        intent.putExtra("book", book);
-        context.startActivity(intent);
+    private void showBookDetailsDialog(Book book) {
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_book_details_layout);
+
+        ImageView eraseButton = dialog.findViewById(R.id.eraseBtn);
+        TextView wordCountTextView = dialog.findViewById(R.id.wordCountTextView);
+        TextView bookTitle = dialog.findViewById(R.id.bookTitle);
+        TextView bookAuthor = dialog.findViewById(R.id.bookAuthor);
+        TextView bookSum = dialog.findViewById(R.id.bookSum);
+        FrameLayout readButton = dialog.findViewById(R.id.readBtn);
+
+        wordCountTextView.setText(String.valueOf(book.getTotalWord()));
+        bookTitle.setText(book.getTitle());
+        bookAuthor.setText(book.getAuthor());
+        bookSum.setText(book.getSum());
+
+        readButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ReadingActivity.class);
+            intent.putExtra("book", book);
+            context.startActivity(intent);
+        });
+
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        dialog.show();
     }
 
     @Override

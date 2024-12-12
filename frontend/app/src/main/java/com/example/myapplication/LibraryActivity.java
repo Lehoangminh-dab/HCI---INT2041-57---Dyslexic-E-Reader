@@ -21,24 +21,23 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.Book;
 import com.example.myapplication.model.User;
 import com.example.myapplication.utils.textextractor.ImageTextExtractor;
 import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
 import com.example.myapplication.utils.textextractor.TextExtractor;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
@@ -48,6 +47,8 @@ import com.yalantis.ucrop.UCrop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -77,13 +78,17 @@ public class LibraryActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-
-    private ImageView openBookButton;
+    private ImageView scanBookButton;
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int CAMERA_CAPTURE_CODE = 101;
     private static final int UCROP_REQUEST_CODE = UCrop.REQUEST_CROP;
 
     private Uri photoUri;
+
+    private UserController controller;
+    private User user;
+    private List<Book> bookList;
+    private String newContent;
 
     private TextExtractor textExtractor;
     private ImageTextExtractor imageTextExtractor;
@@ -100,13 +105,19 @@ public class LibraryActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
+        controller = new UserController(this);
+
+        bookList = new ArrayList<>();
+
+        handleReceivedBook();
+
         uploadFileIcon = findViewById(R.id.upload_file_icon);
         imageTextExtractor = new ImageTextExtractor(this);
         setViewBehaviors();
 
-        openBookButton = findViewById(R.id.open_book_icon);
+        scanBookButton = findViewById(R.id.scan_photo_ic);
 
-        openBookButton.setOnClickListener(v -> {
+        scanBookButton.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{CAMERA}, CAMERA_REQUEST_CODE);
             } else {
@@ -115,21 +126,32 @@ public class LibraryActivity extends AppCompatActivity {
         });
 
         // Render library view buttons.
-//        FragmentLibraryView fragmentLibraryView = new FragmentLibraryView();
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.fragmentLibraryView, fragmentLibraryView);
-//        fragmentTransaction.commit();
-        loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
+        FragmentLibraryView fragmentLibraryView = new FragmentLibraryView();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentLibraryView, fragmentLibraryView);
+        fragmentTransaction.commit();
     }
 
-//    User user;
-//    Book book = new Book(name, data)
-//
-//    List<Book> books = user.getBooks();
-//    books.add(book);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handleReceivedBook();
+    }
 
-//    tạo 1 hàm để update cái user lên database
+    private void handleReceivedBook() {
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+
+        if (user != null && user.getBookList() != null) {
+            bookList.clear();
+            bookList.addAll(user.getBookList());
+        } else {
+            bookList.clear();
+        }
+    }
 
     private void setViewBehaviors() {
         setupUploadFileIconBehavior();
@@ -187,14 +209,8 @@ public class LibraryActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
 
-        if (requestCode != REQUEST_CODE_UPLOAD_FILE && requestCode != CAMERA_CAPTURE_CODE && requestCode != UCROP_REQUEST_CODE) {
-            Log.e(LOG_TAG, "Unexpected request code: " + requestCode);
-            return;
-        }
-
         if (resultCode != RESULT_OK) {
-            Log.e(LOG_TAG, "Unexpected result code: " + resultCode);
-            showMessage("Operation canceled or failed.");
+            showMessage("Unexpected result code: " + resultCode);
             return;
         }
 
@@ -205,52 +221,25 @@ public class LibraryActivity extends AppCompatActivity {
                 return;
             }
 
-            Uri fileUri = getFileUri(resultData);
+            Uri fileUri = resultData.getData();
             Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
 
             String mimeType = getContentResolver().getType(fileUri);
             if (mimeType != null && (mimeType.equals(PNG_MIME_TYPE) || mimeType.equals(JPEG_MIME_TYPE))) {
-                // Extract text from image on a separate thread.
-                extractTextFromImage(fileUri).thenAccept(extractedText -> {
-                    if (extractedText != null) {
-                        editor.putString("content", extractedText);
-                        editor.apply();
-//                            createTextFile(fileUri, extractedText);
-                    } else {
-                        showMessage("Image text content cannot be found.");
-                    }
-                });
+                extractTextFromImage(fileUri).thenAccept(this::processExtractedContent);
             } else {
-                // Extract text from document on the main thread.
                 String extractedText = extractTextFromDocumentFile(fileUri);
-                if (extractedText != null) {
-                    editor.putString("content", extractedText);
-                    editor.apply();
-//                    createTextFile(fileUri, extractedText);
-                } else {
-                    showMessage("Error extracting text from file.");
-                }
+                processExtractedContent(extractedText);
             }
-
-            Intent intent = new Intent(this, ReadingActivity.class);
-            startActivity(intent);
-        }
-
-        // Xử lý kết quả từ hoạt động camera hoặc UCrop
-        if (requestCode == CAMERA_CAPTURE_CODE) {
-            // Gọi UCrop để cắt ảnh
+        } else if (requestCode == CAMERA_CAPTURE_CODE) {
             Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped_image.jpg"));
             UCrop.Options options = new UCrop.Options();
             options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
             options.setCompressionQuality(90);
-            options.setFreeStyleCropEnabled(true); // Cho phép người dùng thay đổi khung cắt tự do
-            options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-            options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.colorAccent));
+            options.setFreeStyleCropEnabled(true);
 
-            // Thiết lập tỷ lệ khung cắt (nếu cần cố định)
             UCrop.of(photoUri, destinationUri)
-                    .withAspectRatio(16, 9) // Tỷ lệ khung cắt 16:9
+                    .withAspectRatio(16, 9)
                     .withOptions(options)
                     .start(this);
         } else if (requestCode == UCROP_REQUEST_CODE) {
@@ -272,6 +261,7 @@ public class LibraryActivity extends AppCompatActivity {
             }
         }
     }
+
 
 
     private Uri getFileUri(Intent data) {
@@ -353,6 +343,39 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
 
+//    private void processImage(Uri imageUri) {
+//        try {
+//            Bitmap bitmap = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+//                    ? ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri))
+//                    : MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+//
+//            InputImage image = InputImage.fromBitmap(bitmap, 0);
+//            TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+//
+//            recognizer.process(image)
+//                    .addOnSuccessListener(text -> {
+//                        String extractedText = text.getText();
+//                        if (!extractedText.isEmpty()) {
+//                            // Lưu văn bản vào SharedPreferences
+//                            editor.putString("content", extractedText);
+//                            editor.apply();
+//
+//                            // Chuyển sang ReadingActivity
+//                            Intent intent = new Intent(this, ReadingActivity.class);
+//                            startActivity(intent);
+//                        } else {
+//                            Toast.makeText(this, "No text detected in the image.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    })
+//                    .addOnFailureListener(e ->
+//                            Toast.makeText(this, "Failed to process image: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+//                    );
+//        } catch (IOException e) {
+//            Toast.makeText(this, "Failed to load image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+
     private void processImage(Uri imageUri) {
         try {
             Bitmap bitmap = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
@@ -365,17 +388,7 @@ public class LibraryActivity extends AppCompatActivity {
             recognizer.process(image)
                     .addOnSuccessListener(text -> {
                         String extractedText = text.getText();
-                        if (!extractedText.isEmpty()) {
-                            // Lưu văn bản vào SharedPreferences
-                            editor.putString("content", extractedText);
-                            editor.apply();
-
-                            // Chuyển sang ReadingActivity
-                            Intent intent = new Intent(this, ReadingActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(this, "No text detected in the image.", Toast.LENGTH_SHORT).show();
-                        }
+                        processExtractedContent(extractedText);
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Failed to process image: " + e.getMessage(), Toast.LENGTH_SHORT).show()
@@ -394,6 +407,22 @@ public class LibraryActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Camera permission is required to scan text.", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+
+    private void processExtractedContent(String content) {
+        if (content != null && !content.isEmpty()) {
+            // Tạo đối tượng Book tạm thời với nội dung
+            Book tempBook = new Book();
+            tempBook.setContent(content);
+
+            // Lưu đối tượng vào SharedPreferences hoặc truyền trực tiếp qua Intent
+            Intent intent = new Intent(this, ReadingActivity.class);
+            intent.putExtra("book", tempBook); // Book cần implement Serializable hoặc Parcelable
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "No content detected.", Toast.LENGTH_SHORT).show();
         }
     }
 

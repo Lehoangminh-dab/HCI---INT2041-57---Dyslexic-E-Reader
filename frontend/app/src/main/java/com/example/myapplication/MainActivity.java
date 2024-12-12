@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         String json = gson.toJson(user);
         editor.putString("user", json);
         editor.apply();
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         Toast.makeText(this, "Welcome " + user.getName(), Toast.LENGTH_SHORT).show();
         finish();

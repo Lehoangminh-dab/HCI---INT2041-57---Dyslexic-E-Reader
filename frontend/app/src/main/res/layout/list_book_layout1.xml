@@ -7,22 +7,26 @@
     android:layout_height="wrap_content"
     android:paddingTop="5dp">
 
-    <ImageButton
+    <ImageView
         android:id="@+id/bookPoster1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:contentDescription="poster1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_upload_file" />
+        app:srcCompat="@drawable/ic_book_cover" />
 
     <TextView
         android:id="@+id/bookTitle1"
-        android:layout_width="wrap_content"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:text="book1"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
+        android:textSize="13dp"
+        android:text="book1 test test test test test test"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookPoster1" />
 

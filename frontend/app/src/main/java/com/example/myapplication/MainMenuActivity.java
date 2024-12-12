@@ -1,10 +1,18 @@
 package com.example.myapplication;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,20 +24,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.adapter.BookAdapter1;
 import com.example.myapplication.adapter.BookAdapter2;
 import com.example.myapplication.model.Book;
+import com.example.myapplication.model.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenuActivity extends AppCompatActivity {
 
-//    private ConstraintLayout book1, book2, book3, book4, book5, book6, book7, book8, book9, book10, book11, book12;
+    private SharedPreferences sharedPreferences;
+    private User user;
 
-    private RecyclerView favouriteListView, recommendedListView;
-    private ListView  currentlyListView;
-    private List<Book> favouriteList, recommendedList, currentlyList;
+    private String userName;
+    private List<Book> bookList;
+    private List<Book> favouriteList, recommendedList;
     private BookAdapter1 favouriteAdapter, recommendedAdapter;
     private BookAdapter2  currentlyAdapter;
 
+    private TextView menuTitle;
+    private RecyclerView favouriteListView, recommendedListView;
+    private ListView  currentlyListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,58 +53,110 @@ public class MainMenuActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main_menu);
 
+        sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
+        menuTitle = findViewById(R.id.menuTitle);
         favouriteListView = findViewById(R.id.favouriteListView);
+        LinearLayoutManager favouriteLayoutManager = new LinearLayoutManager(MainMenuActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        favouriteListView.setLayoutManager(favouriteLayoutManager);
         recommendedListView = findViewById(R.id.recommendedListView);
+        LinearLayoutManager recommendedLayoutManager = new LinearLayoutManager(MainMenuActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        recommendedListView.setLayoutManager(recommendedLayoutManager);
         currentlyListView = findViewById(R.id.currentlyListView);
+
 
         favouriteList = new ArrayList<>();
         recommendedList = new ArrayList<>();
-        currentlyList = new ArrayList<>();
-
-
-        //dữ liệu tạm
-        favouriteList.add(new Book("The Alchemist1", 1,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        favouriteList.add(new Book("The Alchemist2", 2,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        favouriteList.add(new Book("The Alchemist3", 3,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        currentlyList.add(new Book("The Alchemist4", 4, "DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        currentlyList.add(new Book("The Alchemist5", 5,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        currentlyList.add(new Book("The Alchemist6", 6,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        recommendedList.add(new Book("The Alchemist7", 7,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        recommendedList.add(new Book("The Alchemist8", 8,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-        recommendedList.add(new Book("The Alchemist9", 9,"DoThaiSon", "sum", "mot ngay nang da len vui di ta lo gi"));
-
+        bookList = new ArrayList<>();
 
         favouriteAdapter = new BookAdapter1(MainMenuActivity.this, favouriteList);
         recommendedAdapter = new BookAdapter1(MainMenuActivity.this, recommendedList);
-        currentlyAdapter = new BookAdapter2(MainMenuActivity.this, currentlyList);
+        currentlyAdapter = new BookAdapter2(MainMenuActivity.this, bookList);
 
-        LinearLayoutManager favouriteLayoutManager = new LinearLayoutManager(MainMenuActivity.this, LinearLayoutManager.HORIZONTAL, false);
-        favouriteListView.setLayoutManager(favouriteLayoutManager);
+        handleReceivedBook();
 
-        LinearLayoutManager recommendedLayoutManager = new LinearLayoutManager(MainMenuActivity.this, LinearLayoutManager.HORIZONTAL, false);
-        recommendedListView.setLayoutManager(recommendedLayoutManager);
-
+        menuTitle.setText("Hello " + userName);
 
         favouriteListView.setAdapter(favouriteAdapter);
         recommendedListView.setAdapter(recommendedAdapter);
         currentlyListView.setAdapter(currentlyAdapter);
-
 
         loadFragment(R.id.fragmentToolbar, new FragmentToolbar());
 
         currentlyListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(MainMenuActivity.this, BookDetailsActivity.class);
-                // Truyền thông tin sách vào intent
-                intent.putExtra("book", currentlyList.get(i));
-                startActivity(intent);
-
+                showBookDetailsDialog(bookList.get(i));
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handleReceivedBook();
+    }
 
+    private void handleReceivedBook() {
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+
+        if (user != null && user.getBookList() != null) {
+            userName = user.getName();
+            bookList.clear();
+            bookList.addAll(user.getBookList());
+
+            favouriteList.clear();
+            recommendedList.clear();
+            for (Book book : bookList) {
+                if (book.getIsFavourite().equals("true")) {
+                    favouriteList.add(book);
+                }
+                if (book.getIsOurBook().equals("true")) {
+                    recommendedList.add(book);
+                }
+            }
+        } else {
+            bookList.clear();
+        }
+
+        favouriteAdapter.notifyDataSetChanged();
+        recommendedAdapter.notifyDataSetChanged();
+        currentlyAdapter.notifyDataSetChanged();
+    }
+
+    private void showBookDetailsDialog(Book book) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_book_details_layout);
+
+        ImageView eraseButton = dialog.findViewById(R.id.eraseBtn);
+        TextView wordCountTextView = dialog.findViewById(R.id.wordCountTextView);
+        TextView bookTitle = dialog.findViewById(R.id.bookTitle);
+        TextView bookAuthor = dialog.findViewById(R.id.bookAuthor);
+        TextView bookSum = dialog.findViewById(R.id.bookSum);
+        FrameLayout readButton = dialog.findViewById(R.id.readBtn);
+
+        wordCountTextView.setText(String.valueOf(book.getTotalWord()));
+        bookTitle.setText(book.getTitle());
+        bookAuthor.setText(book.getAuthor());
+        bookSum.setText(book.getSum());
+
+        readButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ReadingActivity.class);
+            intent.putExtra("book", book);
+            startActivity(intent);
+        });
+
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        dialog.show();
     }
 
     private void loadFragment(int containerId, Fragment fragment) {

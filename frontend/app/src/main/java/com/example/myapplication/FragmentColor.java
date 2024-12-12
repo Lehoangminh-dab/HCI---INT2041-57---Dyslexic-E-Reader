@@ -4,6 +4,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -12,12 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -243,14 +247,23 @@ public class FragmentColor extends Fragment {
             dialog.dismiss();
         });
 
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
         dialog.show();
     }
 
     private void showChangeColorRuleDialog(int position) {
         Dialog dialog = new Dialog(requireActivity());
-        dialog.setContentView(R.layout.dialog_add_color_rule_layout);
-        String nameThisRule = ruleList.get(position).getName();
-        int colorThisRule = ruleList.get(position).getColor();
+        dialog.setContentView(R.layout.dialog_change_color_rule_layout);
+        ColorRule thisRule = ruleList.get(position);
+        String nameThisRule = thisRule.getName();
+        int colorThisRule = thisRule.getColor();
+        color = colorThisRule;
 
         int red = ContextCompat.getColor(requireContext(), R.color.red);
         int opacity_red = ContextCompat.getColor(requireContext(), R.color.opacity_red);
@@ -274,8 +287,8 @@ public class FragmentColor extends Fragment {
         ImageView oliveButton = dialog.findViewById(R.id.oliveBtn);
         ImageView violetButton = dialog.findViewById(R.id.violetBtn);
         ImageView cancelDialogButton = dialog.findViewById(R.id.cancelDialogBtn);
-        ImageView addNewRuleButton = dialog.findViewById(R.id.addNewRuleBtn);
-        addNewRuleButton.setEnabled(false);
+        FrameLayout changeColorButton = dialog.findViewById(R.id.changeColorBtn);
+        TextView changeColorTextView = dialog.findViewById(R.id.changeColorTextView);
 
         enterLetter.setText(nameThisRule);
 
@@ -298,15 +311,12 @@ public class FragmentColor extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 nameRule = enterLetter.getText().toString().trim();
-                if (nameRule.isEmpty()) {
-                    addNewRuleButton.setEnabled(false);
-                } else {
-                    addNewRuleButton.setEnabled(true);
-                }
+                changeColorTextView.setText("Change");
             }
         });
 
         redButton.setOnClickListener(v -> {
+            changeColorTextView.setText("Change");
             color = red;
             redButton.setColorFilter(red);
             blueButton.setColorFilter(opacity_blue);
@@ -316,6 +326,7 @@ public class FragmentColor extends Fragment {
             violetButton.setColorFilter(opacity_violet);
         });
         blueButton.setOnClickListener(v -> {
+            changeColorTextView.setText("Change");
             color = blue;
             redButton.setColorFilter(opacity_red);
             blueButton.setColorFilter(blue);
@@ -325,6 +336,7 @@ public class FragmentColor extends Fragment {
             violetButton.setColorFilter(opacity_violet);
         });
         greenButton.setOnClickListener(v -> {
+            changeColorTextView.setText("Change");
             color = green;
             redButton.setColorFilter(opacity_red);
             blueButton.setColorFilter(opacity_blue);
@@ -334,6 +346,7 @@ public class FragmentColor extends Fragment {
             violetButton.setColorFilter(opacity_violet);
         });
         pinkButton.setOnClickListener(v -> {
+            changeColorTextView.setText("Change");
             color = pink;
             redButton.setColorFilter(opacity_red);
             blueButton.setColorFilter(opacity_blue);
@@ -343,6 +356,7 @@ public class FragmentColor extends Fragment {
             violetButton.setColorFilter(opacity_violet);
         });
         oliveButton.setOnClickListener(v -> {
+            changeColorTextView.setText("Change");
             color = olive;
             redButton.setColorFilter(opacity_red);
             blueButton.setColorFilter(opacity_blue);
@@ -352,6 +366,7 @@ public class FragmentColor extends Fragment {
             violetButton.setColorFilter(opacity_violet);
         });
         violetButton.setOnClickListener(v -> {
+            changeColorTextView.setText("Change");
             color = violet;
             redButton.setColorFilter(opacity_red);
             blueButton.setColorFilter(opacity_blue);
@@ -363,13 +378,31 @@ public class FragmentColor extends Fragment {
 
         cancelDialogButton.setOnClickListener(v -> dialog.dismiss());
 
-        addNewRuleButton.setOnClickListener(v -> {
-            describeRule = "If you are confusing the letter " + nameRule + ", color it.";
-            ColorRule rule = new ColorRule(nameRule, describeRule, color);
-            ruleList.add(rule);
-            adapter.notifyDataSetChanged();
-            dialog.dismiss();
+        changeColorButton.setOnClickListener(v -> {
+            if (changeColorTextView.getText().equals("Delete")) {
+                ruleList.remove(position);
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+            } else if (changeColorTextView.getText().equals("Change")) {
+                if (!thisRule.getName().equals(nameRule)) {
+                    describeRule = "If you are confusing the letter " + nameRule + ", color it.";
+                    thisRule.setName(nameRule);
+                    thisRule.setDescribe(describeRule);
+                }
+                if (thisRule.getColor() != color) {
+                    thisRule.setColor(color);
+                }
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
         });
+
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
 
         dialog.show();
     }
