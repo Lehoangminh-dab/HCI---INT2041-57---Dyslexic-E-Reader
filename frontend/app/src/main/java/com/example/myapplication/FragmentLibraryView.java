@@ -82,7 +82,7 @@ public class FragmentLibraryView extends Fragment {
         String jsonRetrieved = sharedPreferences.getString("user", null);
         Type type = new TypeToken<User>() {}.getType();
         user = new User(Objects.requireNonNull(gson.fromJson(jsonRetrieved, type)));
-        allBooks = user.getBooks();
+        allBooks = user.getBookList();
         return view;
     }
 
@@ -99,40 +99,32 @@ public class FragmentLibraryView extends Fragment {
     // TODO: Retrieve data from firebase.
     private LibraryView createYourBooksView() {
         List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable yourBooksIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_your_books,
-                null);
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world", "This is a magical world"));
+        Drawable yourBooksIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_your_books, null);
         return new LibraryView("Your Books", allBooks, yourBooksIcon);
     }
 
     // TODO: Retrieve data from firebase.
     private LibraryView createFavouritesView() {
         List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable favouritesIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_favourites,
-                null);
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world", "This is a magical world"));
+        Drawable favouritesIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_favourites, null);
         return new LibraryView("Favourites", allBooks, favouritesIcon);
     }
 
     // TODO: Retrieve data from firebase.
     private LibraryView createReadingView() {
         List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable readingIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading,
-                null);
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world", "This is a magical world"));
+        Drawable readingIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null);
         return new LibraryView("Reading", allBooks, readingIcon);
     }
 
     // TODO: Retrieve data from firebase.
     private LibraryView createCompletedView() {
         List<Book> allBooks = new ArrayList<>();
-        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-                "This is a magical world"));
-        Drawable completedIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_completed,
-                null);
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world", "This is a magical world"));
+        Drawable completedIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_completed, null);
         return new LibraryView("Completed", allBooks, completedIcon);
     }
 }
