@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="30dp"
-    android:background="@drawable/stroke_red"
+    android:background="@drawable/rounded_turquoise_background"
     android:orientation="vertical">
 
     <ImageView
@@ -14,7 +14,7 @@
         android:src="@drawable/ic_close"
         android:layout_marginBottom="10dp"
         android:layout_gravity="right"
-        app:tint="@color/red"/>
+        app:tint="@color/white"/>
 
 
     <EditText
@@ -23,9 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:hint="Enter letter or letters combination"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:textSize="16sp"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:backgroundTint="@color/white"/>
 
     <RadioGroup
         android:layout_width="wrap_content"

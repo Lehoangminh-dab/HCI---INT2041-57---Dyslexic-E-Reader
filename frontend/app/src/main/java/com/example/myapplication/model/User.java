@@ -1,7 +1,5 @@
 package com.example.myapplication.model;
 
-import androidx.annotation.Nullable;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -14,12 +12,12 @@ public class User implements Serializable {
     private List<ColorRule> ruleList;
     private Font font;
     private String highLight;
-    private List<Book> books, favouriteList, recommendedList, currentlyList;
+    private List<Book> bookList;
 
     public User() {
     }
 
-    public User(String id, String email, String password, String name, List<ColorRule> ruleList, Font font, String highLight) {
+    public User(String id, String email, String password, String name, List<ColorRule> ruleList, Font font, String highLight, List<Book> bookList) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -27,11 +25,7 @@ public class User implements Serializable {
         this.ruleList = ruleList;
         this.font = font;
         this.highLight = highLight;
-        books = null;
-        favouriteList = null;
-        recommendedList = null;
-        currentlyList = null;
-
+        this.bookList = bookList;
     }
 
     public User(User user) {
@@ -42,7 +36,7 @@ public class User implements Serializable {
         this.ruleList = user.getRuleList();
         this.font = user.getFont();
         this.highLight = user.getHighLight();
-        this.books = user.getBooks();
+        this.bookList = user.getBookList();
     }
 
     public String getId() {
@@ -101,12 +95,12 @@ public class User implements Serializable {
         this.font = font;
     }
 
-    public List<Book> getBooks() {
-        return books;
+    public List<Book> getBookList() {
+        return bookList;
     }
 
-    public void setBooks(List<Book> books) {
-        this.books = books;
+    public void setBookList(List<Book> bookList) {
+        this.bookList = bookList;
     }
 
     @Override
@@ -114,6 +108,6 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(ruleList, user.ruleList) && Objects.equals(font, user.font) && Objects.equals(highLight, user.highLight) && Objects.equals(books, user.books);
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(ruleList, user.ruleList) && Objects.equals(font, user.font) && Objects.equals(highLight, user.highLight) && Objects.equals(bookList, user.bookList);
     }
 }

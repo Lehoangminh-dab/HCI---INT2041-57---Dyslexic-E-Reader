@@ -42,7 +42,7 @@ public class BookAdapter2 extends ArrayAdapter<Book> {
         ImageView bookPoster2 = view.findViewById(R.id.bookPoster2);
 
         bookTitle2.setText(book.getTitle());
-        totalWord2.setText(String.format("%d word", book.getTotalWord()));
+        totalWord2.setText(String.format("%d", book.getTotalWord()));
 
 
         return view;
