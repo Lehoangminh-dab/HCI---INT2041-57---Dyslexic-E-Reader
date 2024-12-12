@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.BookDetailsActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ReadingActivity;
 import com.example.myapplication.model.Book;
@@ -47,12 +46,7 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.BookAdapter1
             return;
         }
         holder.bookTitle1.setText(book.getTitle());
-        holder.bookLayout1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBookDetailsDialog(book);
-            }
-        });
+        holder.bookLayout1.setOnClickListener(v -> showBookDetailsDialog(book));
     }
 
     private void showBookDetailsDialog(Book book) {
@@ -66,7 +60,7 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.BookAdapter1
         TextView bookSum = dialog.findViewById(R.id.bookSum);
         FrameLayout readButton = dialog.findViewById(R.id.readBtn);
 
-        wordCountTextView.setText(book.getTotalWord());
+        wordCountTextView.setText(String.valueOf(book.getTotalWord()));
         bookTitle.setText(book.getTitle());
         bookAuthor.setText(book.getAuthor());
         bookSum.setText(book.getSum());
@@ -76,6 +70,8 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.BookAdapter1
             intent.putExtra("book", book);
             context.startActivity(intent);
         });
+
+        dialog.show();
     }
 
     @Override

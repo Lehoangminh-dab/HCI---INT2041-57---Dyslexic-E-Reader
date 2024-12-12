@@ -95,6 +95,7 @@ public class ReadingActivity extends AppCompatActivity {
 
         Intent receivedIntent = getIntent();
         currentBook = (Book) receivedIntent.getSerializableExtra("book");
+        content = currentBook.getContent();
 
         readingProgress.setProgressTintList(ColorStateList.valueOf(Color.RED));
 
@@ -141,12 +142,10 @@ public class ReadingActivity extends AppCompatActivity {
             }
         });
 
-        finishedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ReadingActivity.this, MainMenuActivity.class);
-                startActivity(intent);
-            }
+        finishedBtn.setOnClickListener(v -> {
+            currentBook.setComplete(true);
+            Intent intent = new Intent(ReadingActivity.this, MainMenuActivity.class);
+            startActivity(intent);
         });
 
         // Sử dụng ViewTreeObserver để đợi cho đến khi TextView có kích thước chính xác
@@ -183,10 +182,6 @@ public class ReadingActivity extends AppCompatActivity {
         String jsonRetrieved = sharedPreferences.getString("user", null);
         Type type = new TypeToken<User>() {}.getType();
         user = gson.fromJson(jsonRetrieved, type);
-
-        // cần sửa lại
-        content = sharedPreferences.getString("content", "Error Loading Content");
-        highlightMode = sharedPreferences.getString("highlight_mode", "default_mode"); // Giá trị mặc định
 
         font = user.getFont();
         fontName = font.getName();
