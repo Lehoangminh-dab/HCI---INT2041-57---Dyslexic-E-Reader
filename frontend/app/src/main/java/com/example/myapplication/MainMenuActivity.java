@@ -3,8 +3,11 @@ package com.example.myapplication;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -108,10 +111,10 @@ public class MainMenuActivity extends AppCompatActivity {
             favouriteList.clear();
             recommendedList.clear();
             for (Book book : bookList) {
-                if (book.isFavourite()) {
+                if (book.getIsFavourite().equals("true")) {
                     favouriteList.add(book);
                 }
-                if (book.isOurBook()) {
+                if (book.getIsOurBook().equals("true")) {
                     recommendedList.add(book);
                 }
             }
@@ -126,7 +129,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void showBookDetailsDialog(Book book) {
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_book_details);
+        dialog.setContentView(R.layout.dialog_book_details_layout);
 
         ImageView eraseButton = dialog.findViewById(R.id.eraseBtn);
         TextView wordCountTextView = dialog.findViewById(R.id.wordCountTextView);
@@ -145,6 +148,13 @@ public class MainMenuActivity extends AppCompatActivity {
             intent.putExtra("book", book);
             startActivity(intent);
         });
+
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
 
         dialog.show();
     }

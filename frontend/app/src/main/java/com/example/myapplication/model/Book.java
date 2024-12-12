@@ -8,9 +8,9 @@ public class Book implements Serializable {
     private int id;
     private String title, author, sum, content;
     private int totalWord;
-    private boolean isFavourite;
-    private boolean isComplete;
-    private boolean isOurBook;
+    private String isFavourite;
+    private String isComplete;
+    private String isOurBook;
     private String folder;
 
     public Book() {
@@ -26,9 +26,9 @@ public class Book implements Serializable {
         StringTokenizer tokenizer = new StringTokenizer(content);
         this.totalWord = tokenizer.countTokens();
         this.sum = content.substring(0, 60).trim() + "...";
-        isFavourite = false;
-        isComplete = false;
-        isOurBook = false;
+        isFavourite = "false";
+        isComplete = "false";
+        isOurBook = "false";
     }
 
     public Book(String title, String author, String sum, String content) {
@@ -43,9 +43,22 @@ public class Book implements Serializable {
         this.sum = sum;
         this.title = title;
         this.author = author;
-        isFavourite = false;
-        isComplete = false;
-        isOurBook = false;
+        isFavourite = "false";
+        isComplete = "false";
+        isOurBook = "false";
+    }
+
+    public Book(Book book) {
+        this.folder = book.folder;
+        this.isOurBook = book.isOurBook;
+        this.isComplete = book.isComplete;
+        this.isFavourite = book.isFavourite;
+        this.totalWord = book.totalWord;
+        this.content = book.content;
+        this.sum = book.sum;
+        this.author = book.author;
+        this.title = book.title;
+        id = hashCode();
     }
 
     public int getId() {
@@ -92,28 +105,28 @@ public class Book implements Serializable {
         this.content = content;
     }
 
-    public boolean isFavourite() {
+    public String getIsFavourite() {
         return isFavourite;
     }
 
-    public void setFavourite(boolean favourite) {
-        isFavourite = favourite;
+    public void setIsFavourite(String isFavourite) {
+        this.isFavourite = isFavourite;
     }
 
-    public boolean isComplete() {
+    public String getIsComplete() {
         return isComplete;
     }
 
-    public void setComplete(boolean complete) {
-        isComplete = complete;
+    public void setIsComplete(String isComplete) {
+        this.isComplete = isComplete;
     }
 
-    public boolean isOurBook() {
+    public String getIsOurBook() {
         return isOurBook;
     }
 
-    public void setOurBook(boolean ourBook) {
-        isOurBook = ourBook;
+    public void setIsOurBook(String isOurBook) {
+        this.isOurBook = isOurBook;
     }
 
     public String getFolder() {

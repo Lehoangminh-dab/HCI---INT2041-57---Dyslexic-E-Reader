@@ -41,7 +41,7 @@ public class FragmentToolbar extends Fragment {
         if (getActivity() instanceof MainMenuActivity) {
             homeIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             homeButton.setEnabled(false);
-        } else if (getActivity() instanceof LibraryActivity) {
+        } else if (getActivity() instanceof LibraryActivity || getActivity() instanceof ActivityLibraryView) {
             libraryIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.red));
             libraryButton.setEnabled(false);
         } else {

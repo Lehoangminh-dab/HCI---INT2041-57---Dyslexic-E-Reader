@@ -1,20 +1,19 @@
 package com.example.myapplication.adapter;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,7 +50,7 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.BookAdapter1
 
     private void showBookDetailsDialog(Book book) {
         Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_book_details);
+        dialog.setContentView(R.layout.dialog_book_details_layout);
 
         ImageView eraseButton = dialog.findViewById(R.id.eraseBtn);
         TextView wordCountTextView = dialog.findViewById(R.id.wordCountTextView);
@@ -70,6 +69,13 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.BookAdapter1
             intent.putExtra("book", book);
             context.startActivity(intent);
         });
+
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
 
         dialog.show();
     }

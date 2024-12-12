@@ -19,16 +19,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myapplication.controller.UserController;
 import com.example.myapplication.model.Book;
 import com.example.myapplication.model.User;
 import com.example.myapplication.utils.textextractor.ImageTextExtractor;
 import com.example.myapplication.utils.textextractor.TextExtractionStrategyFactory;
 import com.example.myapplication.utils.textextractor.TextExtractor;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -58,6 +63,11 @@ public class LibraryActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    private UserController controller;
+    private User user;
+    private List<Book> bookList;
+    private String newContent;
+
     private TextExtractor textExtractor;
     private ImageTextExtractor imageTextExtractor;
     private ImageView uploadFileIcon;
@@ -73,6 +83,12 @@ public class LibraryActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
+        controller = new UserController(this);
+
+        bookList = new ArrayList<>();
+
+        handleReceivedBook();
+
         uploadFileIcon = findViewById(R.id.upload_file_icon);
         imageTextExtractor = new ImageTextExtractor(this);
         setViewBehaviors();
@@ -85,13 +101,25 @@ public class LibraryActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-//    User user;
-//    Book book = new Book(name, data)
-//
-//    List<Book> books = user.getBooks();
-//    books.add(book);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handleReceivedBook();
+    }
 
-//    tạo 1 hàm để update cái user lên database
+    private void handleReceivedBook() {
+        Gson gson = new Gson();
+        String jsonRetrieved = sharedPreferences.getString("user", null);
+        Type type = new TypeToken<User>() {}.getType();
+        user = gson.fromJson(jsonRetrieved, type);
+
+        if (user != null && user.getBookList() != null) {
+            bookList.clear();
+            bookList.addAll(user.getBookList());
+        } else {
+            bookList.clear();
+        }
+    }
 
     private void setViewBehaviors() {
         setupUploadFileIconBehavior();
@@ -175,7 +203,6 @@ public class LibraryActivity extends AppCompatActivity {
                         if (extractedText != null) {
                             editor.putString("content", extractedText);
                             editor.apply();
-//                            createTextFile(fileUri, extractedText);
                         } else {
                             showMessage("Image text content cannot be found.");
                         }

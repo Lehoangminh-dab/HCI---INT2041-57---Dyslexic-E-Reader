@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -22,20 +23,17 @@ public class ActivityLibraryView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_library_view);
 
         Intent intent = getIntent();
         String viewName = intent.getStringExtra("view_name");
-        List<Book> books = new ArrayList<>();
-        books.add(new Book("Harry Pot", "J.K. Rowling", "A magical world", "This is a magical world"));
-        // Init fragments
+
         fragmentLibraryViewTitle = new FragmentLibraryViewTitle();
         fragmentLibraryBooksView = new FragmentLibraryBooksView();
 
-        // Pass libraryView into fragments.
         Bundle bundle = new Bundle();
         bundle.putString("view_name", viewName);
-        bundle.putSerializable("books", (Serializable) books);
         fragmentLibraryViewTitle.setArguments(bundle);
         fragmentLibraryBooksView.setArguments(bundle);
 
