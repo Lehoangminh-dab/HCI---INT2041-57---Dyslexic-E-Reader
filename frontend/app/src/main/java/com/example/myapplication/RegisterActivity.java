@@ -17,8 +17,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.myapplication.controller.BookController;
 import com.example.myapplication.controller.ColorRuleController;
 import com.example.myapplication.controller.UserController;
+import com.example.myapplication.model.Book;
 import com.example.myapplication.model.ColorRule;
 import com.example.myapplication.model.Font;
 import com.example.myapplication.model.User;
@@ -38,12 +40,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     private UserController controller;
     private ColorRuleController colorRuleController;
+    private BookController bookController;
 
     private String email = "";
     private String name = "";
     private String password = "";
     private String confirmPassword = "";
     private List<ColorRule> ruleList;
+    private List<Book> bookList;
 
     private EditText emailInput;
     private EditText nameInput;
@@ -66,8 +70,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         controller = new UserController(this);
         colorRuleController = new ColorRuleController(this);
+        bookController = new BookController(this);
 
         ruleList = new ArrayList<>();
+        bookList = new ArrayList<>();
 
         emailInput = findViewById(R.id.emailInput);
         nameInput = findViewById(R.id.nameInput);
@@ -168,6 +174,12 @@ public class RegisterActivity extends AppCompatActivity {
                 ruleList.addAll(rules);
             }
 
+            bookController.getAllBooks().thenAccept(books -> {
+               if (!books.isEmpty()) {
+                   bookList.addAll(books);
+               }
+            });
+
             Font font = new Font("dyslexic", 30, 1, 1, 1);
 
             auth.createUserWithEmailAndPassword(email, password)
@@ -176,7 +188,7 @@ public class RegisterActivity extends AppCompatActivity {
                             FirebaseUser firebaseUser = auth.getCurrentUser();
                             if (firebaseUser != null) {
                                 String userId = firebaseUser.getUid();
-                                User user = new User(userId, email, password, name, ruleList, font, "WORD");
+                                User user = new User(userId, email, password, name, ruleList, font, "WORD", bookList);
                                 controller.addUser(user);
 
                                 Gson gson = new Gson();
@@ -190,7 +202,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         progressDialog.dismiss();
 
-                        Intent intent = new Intent(this, HomeActivity.class);
+                        Intent intent = new Intent(this, MainMenuActivity.class);
                         startActivity(intent);
 
                         finish();

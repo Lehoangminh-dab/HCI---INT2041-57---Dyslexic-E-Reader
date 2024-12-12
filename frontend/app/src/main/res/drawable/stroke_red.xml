@@ -2,7 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/white"/>
-<!--    Đang bị lỗi dialog không bo góc được-->
     <corners android:radius="10dp"/>
     <stroke
         android:color="@color/red"
