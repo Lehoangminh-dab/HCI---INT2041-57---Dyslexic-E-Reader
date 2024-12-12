@@ -104,9 +104,6 @@ dependencies {
     implementation("com.github.yalantis:ucrop:2.2.6")
 
 
-
-
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

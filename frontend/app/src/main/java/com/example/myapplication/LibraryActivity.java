@@ -2,13 +2,16 @@ package com.example.myapplication;
 
 import static android.Manifest.permission.CAMERA;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ImageDecoder;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +19,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -87,8 +93,8 @@ public class LibraryActivity extends AppCompatActivity {
 
     private UserController controller;
     private User user;
+    private User initialUser;
     private List<Book> bookList;
-    private String newContent;
 
     private TextExtractor textExtractor;
     private ImageTextExtractor imageTextExtractor;
@@ -134,6 +140,19 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        user.setBookList(bookList);
+        if (!initialUser.equals(user)) {
+            controller.updateUser(user);
+            Gson gson = new Gson();
+            String json = gson.toJson(user);
+            editor.putString("user", json);
+            editor.apply();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         handleReceivedBook();
@@ -144,6 +163,7 @@ public class LibraryActivity extends AppCompatActivity {
         String jsonRetrieved = sharedPreferences.getString("user", null);
         Type type = new TypeToken<User>() {}.getType();
         user = gson.fromJson(jsonRetrieved, type);
+        initialUser = new User(user);
 
         if (user != null && user.getBookList() != null) {
             bookList.clear();
@@ -326,11 +346,6 @@ public class LibraryActivity extends AppCompatActivity {
         Snackbar.make(uploadFileIcon, message, Snackbar.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -413,17 +428,43 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void processExtractedContent(String content) {
         if (content != null && !content.isEmpty()) {
-            // Tạo đối tượng Book tạm thời với nội dung
-            Book tempBook = new Book();
-            tempBook.setContent(content);
-
-            // Lưu đối tượng vào SharedPreferences hoặc truyền trực tiếp qua Intent
-            Intent intent = new Intent(this, ReadingActivity.class);
-            intent.putExtra("book", tempBook); // Book cần implement Serializable hoặc Parcelable
-            startActivity(intent);
+            Book newBook = new Book(content);
+            bookList.add(newBook);
+            showBookDetailsDialog(newBook);
         } else {
             Toast.makeText(this, "No content detected.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void showBookDetailsDialog(Book book) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_book_details_layout);
+
+        ImageView eraseButton = dialog.findViewById(R.id.eraseBtn);
+        TextView wordCountTextView = dialog.findViewById(R.id.wordCountTextView);
+        TextView bookTitle = dialog.findViewById(R.id.bookTitle);
+        TextView bookAuthor = dialog.findViewById(R.id.bookAuthor);
+        TextView bookSum = dialog.findViewById(R.id.bookSum);
+        FrameLayout readButton = dialog.findViewById(R.id.readBtn);
+
+        wordCountTextView.setText(String.valueOf(book.getTotalWord()));
+        bookTitle.setText(book.getTitle());
+        bookAuthor.setText(book.getAuthor());
+        bookSum.setText(book.getSum());
+
+        readButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ReadingActivity.class);
+            intent.putExtra("book", book);
+            startActivity(intent);
+        });
+
+        if (dialog.getWindow() != null) {
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            dialog.getWindow().setAttributes(params);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        dialog.show();
+    }
 }

@@ -23,26 +23,11 @@ public class Book implements Serializable {
             return;
         }
         this.content = content;
+        author = "you";
+        title = "Book " + id;
         StringTokenizer tokenizer = new StringTokenizer(content);
-        this.totalWord = tokenizer.countTokens();
-        this.sum = content.substring(0, 60).trim() + "...";
-        isFavourite = "false";
-        isComplete = "false";
-        isOurBook = "false";
-    }
-
-    public Book(String title, String author, String sum, String content) {
-        id = hashCode();
-        content.trim();
-        if (content.isEmpty()) {
-            return;
-        }
-        this.content = content;
-        StringTokenizer tokenizer = new StringTokenizer(content);
-        this.totalWord = tokenizer.countTokens();
-        this.sum = sum;
-        this.title = title;
-        this.author = author;
+        totalWord = tokenizer.countTokens();
+        sum = content.substring(0, 60).trim() + "...";
         isFavourite = "false";
         isComplete = "false";
         isOurBook = "false";
