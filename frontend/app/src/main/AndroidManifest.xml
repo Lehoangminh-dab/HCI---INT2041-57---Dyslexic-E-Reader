@@ -67,7 +67,12 @@
             android:name=".ReadingActivity"
             android:exported="false">
         </activity>
-
+        <activity
+            android:name=".BookDetailsActivity"
+            android:exported="false">
+        </activity>
+        <activity android:name=".ActivityLibraryView">
+        </activity>
 
     </application>
 
