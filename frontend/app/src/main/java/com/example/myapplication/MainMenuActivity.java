@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -25,8 +24,6 @@ import com.example.myapplication.model.Book;
 import com.example.myapplication.model.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -138,7 +135,7 @@ public class MainMenuActivity extends AppCompatActivity {
         TextView bookSum = dialog.findViewById(R.id.bookSum);
         FrameLayout readButton = dialog.findViewById(R.id.readBtn);
 
-        wordCountTextView.setText(book.getTotalWord());
+        wordCountTextView.setText(String.valueOf(book.getTotalWord()));
         bookTitle.setText(book.getTitle());
         bookAuthor.setText(book.getAuthor());
         bookSum.setText(book.getSum());
@@ -148,6 +145,8 @@ public class MainMenuActivity extends AppCompatActivity {
             intent.putExtra("book", book);
             startActivity(intent);
         });
+
+        dialog.show();
     }
 
     private void loadFragment(int containerId, Fragment fragment) {
