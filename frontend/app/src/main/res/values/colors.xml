@@ -26,4 +26,7 @@
     <color name="opacity_yellow">#66F6BB42</color>
     <color name="white">#FFFFFFFF</color>
     <color name="opacity">#B3FFFFFF</color>
+    <color name="colorPrimary">#2196F3</color> <!-- Xanh dương -->
+    <color name="colorPrimaryDark">#1976D2</color> <!-- Xanh dương đậm -->
+    <color name="colorAccent">#FF4081</color> <!-- Hồng -->
 </resources>

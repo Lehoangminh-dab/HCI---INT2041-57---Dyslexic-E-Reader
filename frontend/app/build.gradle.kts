@@ -59,6 +59,7 @@ android {
         jvmTarget = "12"
 
     }
+
 }
 
 dependencies {
@@ -97,6 +98,15 @@ dependencies {
     implementation("com.itextpdf:io:8.0.5")
     implementation("com.google.mlkit:text-recognition:16.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+    implementation(libs.android.image.cropper)
+    implementation("com.vanniktech:android-image-cropper:4.6.0")
+    implementation("com.github.yalantis:ucrop:2.2.6")
+
+
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

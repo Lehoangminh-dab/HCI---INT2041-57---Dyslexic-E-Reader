@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.model.Book;
@@ -75,6 +76,13 @@ public class LibraryActivity extends AppCompatActivity {
         uploadFileIcon = findViewById(R.id.upload_file_icon);
         imageTextExtractor = new ImageTextExtractor(this);
         setViewBehaviors();
+
+        // Render library view buttons.
+        FragmentLibraryView fragmentLibraryView = new FragmentLibraryView();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentLibraryView, fragmentLibraryView);
+        fragmentTransaction.commit();
     }
 
 //    User user;
