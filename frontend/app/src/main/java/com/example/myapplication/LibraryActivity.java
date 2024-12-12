@@ -1,20 +1,30 @@
 package com.example.myapplication;
 
+import static android.Manifest.permission.CAMERA;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,6 +38,11 @@ import com.example.myapplication.utils.textextractor.TextExtractor;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -63,6 +78,13 @@ public class LibraryActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    private ImageView scanBookButton;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int CAMERA_CAPTURE_CODE = 101;
+    private static final int UCROP_REQUEST_CODE = UCrop.REQUEST_CROP;
+
+    private Uri photoUri;
+
     private UserController controller;
     private User user;
     private List<Book> bookList;
@@ -92,6 +114,16 @@ public class LibraryActivity extends AppCompatActivity {
         uploadFileIcon = findViewById(R.id.upload_file_icon);
         imageTextExtractor = new ImageTextExtractor(this);
         setViewBehaviors();
+
+        scanBookButton = findViewById(R.id.scan_photo_ic);
+
+        scanBookButton.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{CAMERA}, CAMERA_REQUEST_CODE);
+            } else {
+                openCamera();
+            }
+        });
 
         // Render library view buttons.
         FragmentLibraryView fragmentLibraryView = new FragmentLibraryView();
@@ -174,56 +206,63 @@ public class LibraryActivity extends AppCompatActivity {
      * @see android.content.Context#getFilesDir()
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent resultData) {
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
 
-        // Verify response
-        if (requestCode != REQUEST_CODE_UPLOAD_FILE) {
-            showMessage("Unexpected request code: " + requestCode);
-        }
-        if (resultCode != LibraryActivity.RESULT_OK) {
+        if (resultCode != RESULT_OK) {
             showMessage("Unexpected result code: " + resultCode);
-        }
-        if (resultData == null) {
-            showMessage("Unexpected null result data");
+            return;
         }
 
-        Uri fileUri = getFileUri(resultData);
-        if (fileUri == null) {
-            showMessage("Unexpected null file URI");
-        }
-        Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
+        if (requestCode == REQUEST_CODE_UPLOAD_FILE) {
+            if (resultData == null || resultData.getData() == null) {
+                Log.e(LOG_TAG, "Null result data for file selection");
+                showMessage("No file selected.");
+                return;
+            }
 
-        String mimeType = getContentResolver().getType(fileUri);
-        if (mimeType.equals(PNG_MIME_TYPE) || mimeType.equals(JPEG_MIME_TYPE)) {
-            // Extract text from image on a separate thread.
-            extractTextFromImage(fileUri).thenAccept(
-                    extractedText -> {
-                        if (extractedText != null) {
-                            editor.putString("content", extractedText);
-                            editor.apply();
-                        } else {
-                            showMessage("Image text content cannot be found.");
-                        }
-                    }
-            );
-        } else {
-            // Extract text from document on the main thread.
-            String extractedText = extractTextFromDocumentFile(fileUri);
-            if (extractedText != null) {
-                editor.putString("content", extractedText);
-                editor.apply();
-//                createTextFile(fileUri, extractedText);
+            Uri fileUri = resultData.getData();
+            Log.d(LOG_TAG, "Chosen file URI: " + fileUri);
 
+            String mimeType = getContentResolver().getType(fileUri);
+            if (mimeType != null && (mimeType.equals(PNG_MIME_TYPE) || mimeType.equals(JPEG_MIME_TYPE))) {
+                extractTextFromImage(fileUri).thenAccept(this::processExtractedContent);
             } else {
-                showMessage("Error extracting text from file");
+                String extractedText = extractTextFromDocumentFile(fileUri);
+                processExtractedContent(extractedText);
+            }
+        } else if (requestCode == CAMERA_CAPTURE_CODE) {
+            Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped_image.jpg"));
+            UCrop.Options options = new UCrop.Options();
+            options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
+            options.setCompressionQuality(90);
+            options.setFreeStyleCropEnabled(true);
+
+            UCrop.of(photoUri, destinationUri)
+                    .withAspectRatio(16, 9)
+                    .withOptions(options)
+                    .start(this);
+        } else if (requestCode == UCROP_REQUEST_CODE) {
+            if (resultData != null) {
+                Uri croppedUri = UCrop.getOutput(resultData);
+                if (croppedUri != null) {
+                    processImage(croppedUri);
+                } else {
+                    showMessage("Failed to get cropped image URI.");
+                }
+            } else {
+                Throwable cropError = UCrop.getError(resultData);
+                if (cropError != null) {
+                    Log.e(LOG_TAG, "Crop error", cropError);
+                    showMessage("Crop error: " + cropError.getMessage());
+                } else {
+                    showMessage("Unknown error occurred during cropping.");
+                }
             }
         }
-
-        Intent intent = new Intent(this, ReadingActivity.class);
-        startActivity(intent);
     }
+
+
 
     private Uri getFileUri(Intent data) {
         return data.getData();
@@ -286,4 +325,105 @@ public class LibraryActivity extends AppCompatActivity {
     private void showMessage(String message) {
         Snackbar.make(uploadFileIcon, message, Snackbar.LENGTH_LONG).show();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Tạo file để lưu ảnh tạm thời
+        File photoFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp_photo.jpg");
+        photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", photoFile);
+
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        startActivityForResult(cameraIntent, CAMERA_CAPTURE_CODE);
+    }
+
+
+//    private void processImage(Uri imageUri) {
+//        try {
+//            Bitmap bitmap = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+//                    ? ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri))
+//                    : MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+//
+//            InputImage image = InputImage.fromBitmap(bitmap, 0);
+//            TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+//
+//            recognizer.process(image)
+//                    .addOnSuccessListener(text -> {
+//                        String extractedText = text.getText();
+//                        if (!extractedText.isEmpty()) {
+//                            // Lưu văn bản vào SharedPreferences
+//                            editor.putString("content", extractedText);
+//                            editor.apply();
+//
+//                            // Chuyển sang ReadingActivity
+//                            Intent intent = new Intent(this, ReadingActivity.class);
+//                            startActivity(intent);
+//                        } else {
+//                            Toast.makeText(this, "No text detected in the image.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    })
+//                    .addOnFailureListener(e ->
+//                            Toast.makeText(this, "Failed to process image: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+//                    );
+//        } catch (IOException e) {
+//            Toast.makeText(this, "Failed to load image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+
+    private void processImage(Uri imageUri) {
+        try {
+            Bitmap bitmap = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+                    ? ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), imageUri))
+                    : MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+
+            InputImage image = InputImage.fromBitmap(bitmap, 0);
+            TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+
+            recognizer.process(image)
+                    .addOnSuccessListener(text -> {
+                        String extractedText = text.getText();
+                        processExtractedContent(extractedText);
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Failed to process image: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to load image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera permission is required to scan text.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private void processExtractedContent(String content) {
+        if (content != null && !content.isEmpty()) {
+            // Tạo đối tượng Book tạm thời với nội dung
+            Book tempBook = new Book();
+            tempBook.setContent(content);
+
+            // Lưu đối tượng vào SharedPreferences hoặc truyền trực tiếp qua Intent
+            Intent intent = new Intent(this, ReadingActivity.class);
+            intent.putExtra("book", tempBook); // Book cần implement Serializable hoặc Parcelable
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "No content detected.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
