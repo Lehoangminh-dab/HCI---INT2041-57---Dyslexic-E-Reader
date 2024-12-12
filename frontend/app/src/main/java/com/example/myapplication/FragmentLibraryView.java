@@ -78,51 +78,51 @@ public class FragmentLibraryView extends Fragment {
 
     private List<LibraryView> createLibraryViews() {
         List<LibraryView> libraryViews = new ArrayList<>();
-//        libraryViews.add(createYourBooksView());
-//        libraryViews.add(createFavouritesView());
-//        libraryViews.add(createReadingView());
-//        libraryViews.add(createCompletedView());
+        libraryViews.add(createYourBooksView());
+        libraryViews.add(createFavouritesView());
+        libraryViews.add(createReadingView());
+        libraryViews.add(createCompletedView());
 
         return libraryViews;
     }
-//
-//    // TODO: Retrieve data from firebase.
-//    private LibraryView createYourBooksView() {
-//        List<Book> allBooks = new ArrayList<>();
-//        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-//                "This is a magical world"));
-//        Drawable yourBooksIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_your_books,
-//                null);
-//        return new LibraryView("Your Books", allBooks, yourBooksIcon);
-//    }
-//
-//    // TODO: Retrieve data from firebase.
-//    private LibraryView createFavouritesView() {
-//        List<Book> allBooks = new ArrayList<>();
-//        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-//                "This is a magical world"));
-//        Drawable favouritesIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_favourites,
-//                null);
-//        return new LibraryView("Favourites", allBooks, favouritesIcon);
-//    }
-//
-//    // TODO: Retrieve data from firebase.
-//    private LibraryView createReadingView() {
-//        List<Book> allBooks = new ArrayList<>();
-//        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-//                "This is a magical world"));
-//        Drawable readingIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading,
-//                null);
-//        return new LibraryView("Reading", allBooks, readingIcon);
-//    }
-//
-//    // TODO: Retrieve data from firebase.
-//    private LibraryView createCompletedView() {
-//        List<Book> allBooks = new ArrayList<>();
-//        allBooks.add(new Book("Harry Pot", 100, "J.K. Rowling", "A magical world",
-//                "This is a magical world"));
-//        Drawable completedIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_completed,
-//                null);
-//        return new LibraryView("Completed", allBooks, completedIcon);
-//    }
+
+    // TODO: Retrieve data from firebase.
+    private LibraryView createYourBooksView() {
+        List<Book> allBooks = new ArrayList<>();
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
+                "This is a magical world"));
+        Drawable yourBooksIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_your_books,
+                null);
+        return new LibraryView("Your Books", allBooks, yourBooksIcon);
+    }
+
+    // TODO: Retrieve data from firebase.
+    private LibraryView createFavouritesView() {
+        List<Book> allBooks = new ArrayList<>();
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
+                "This is a magical world"));
+        Drawable favouritesIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_favourites,
+                null);
+        return new LibraryView("Favourites", allBooks, favouritesIcon);
+    }
+
+    // TODO: Retrieve data from firebase.
+    private LibraryView createReadingView() {
+        List<Book> allBooks = new ArrayList<>();
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
+                "This is a magical world"));
+        Drawable readingIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading,
+                null);
+        return new LibraryView("Reading", allBooks, readingIcon);
+    }
+
+    // TODO: Retrieve data from firebase.
+    private LibraryView createCompletedView() {
+        List<Book> allBooks = new ArrayList<>();
+        allBooks.add(new Book("Harry Pot", "J.K. Rowling", "A magical world",
+                "This is a magical world"));
+        Drawable completedIcon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_completed,
+                null);
+        return new LibraryView("Completed", allBooks, completedIcon);
+    }
 }
